@@ -57,7 +57,7 @@ public class AggregateLicenseNoticeMojo
 
   public void execute() {
     List<String> notices = new ArrayList<>();
-    Path path = Paths.get(projectBuildDirectory + "/license");
+    Path path = Paths.get(projectBuildDirectory + "/distribute");
     reactorProjects.stream().forEach(project -> {
       List<Dependency> dependencies = project.getDependencies();
       dependencies.parallelStream()
