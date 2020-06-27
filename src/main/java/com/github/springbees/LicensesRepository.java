@@ -1,11 +1,14 @@
 package com.github.springbees;
 
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
@@ -37,16 +40,19 @@ public class LicensesRepository {
     });
   }
 
-  public void download(Path path, List<String> notices) {
+  public void saveNotices(List<String> notices) {
     licenseEntries.stream().forEach(entry -> {
       notices.add("===========================================================================");
-      notices.add("Includes content from " + (entry.getOrganization().trim().length() == 0 ? entry.getGroupId() : entry.getOrganization()));
-      notices.add(entry.getOrganizationUrl().trim().length() == 0 ? entry.getHomePage() : entry.getOrganizationUrl());
+      notices.add("Includes content from " + (entry.getOrganization().trim().length() == 0 ? entry
+          .getGroupId() : entry.getOrganization()));
+      notices.add(entry.getOrganizationUrl().trim().length() == 0 ? entry.getHomePage()
+          : entry.getOrganizationUrl());
       String lic = entry.getLicense().entrySet().stream()
-          .map(entry1 -> entry1.getKey() + " ("+entry1.getValue()+")").collect(
+          .map(entry1 -> entry1.getKey() + " (" + entry1.getValue() + ")").collect(
               Collectors.joining(","));
-      notices.add("* "+entry.getArtifactId() + ", Version " + entry.getVersion() + " (" + entry.getHomePage() + ") under " + lic);
-      notices.add("\n");
+      notices.add("* " + entry.getArtifactId() + ", Version " + entry.getVersion() + " (" + entry
+          .getHomePage() + ") under " + lic);
+      notices.add("");
     });
 
 //    licenseEntries.stream().forEach(entry -> {

@@ -1,5 +1,7 @@
 package com.github.springbees;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,8 +32,8 @@ import org.apache.maven.project.MavenProject;
  * limitations under the License.
  */
 
-@Mojo(name = "dependency-license-notice", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
-public class DependencyLicenseNoticeMojo
+@Mojo(name = "dependency-license-notice", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true, aggregator = true)
+public class AggregateLicenseNoticeMojo
     extends AbstractMojo {
 
   @Parameter(defaultValue = "${project}", required = true, readonly = true)
@@ -46,36 +48,47 @@ public class DependencyLicenseNoticeMojo
   @Parameter(property = "scope")
   String scope;
 
+  @Parameter(property = "reactorProjects", readonly = true, required = true)
+  private List<MavenProject> reactorProjects;
+
   Parse parse = new ParseMvnRepository();
 
-  List<String> note = new ArrayList<>();
+  List<LicensesRepository> licensesRepositories = new ArrayList<>();
 
   public void execute() {
     List<String> notices = new ArrayList<>();
-    getLog().debug("ignore dependency groupId [" + project.getGroupId() + "]");
-    Path path = Paths.get(userDirectory + "/dependencies_license");
-    if (!Files.exists(path)) {
+    Path path = Paths.get(projectBuildDirectory + "/license");
+    reactorProjects.stream().forEach(project -> {
+      List<Dependency> dependencies = project.getDependencies();
+      dependencies.parallelStream()
+          .filter(d -> !project.getGroupId().equals(d.getGroupId()))
+          .filter(d -> scope == null || scope.isEmpty() || scope.equals(d.getScope()))
+          .forEach(dependency -> {
+            getLog().info(
+                "NOTICE parse " + dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
+                    + dependency.getVersion());
+            LicensesRepository licensesRepository = parse
+                .parseLicense(dependency.getGroupId(), dependency.getArtifactId(),
+                    dependency.getVersion());
+            licensesRepositories.add(licensesRepository);
+          });
+    });
+    licensesRepositories.stream().forEach(lic -> lic.saveNotices(notices));
+    if(!Files.exists(path)){
       try {
         Files.createDirectories(path);
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        e.printStackTrace();
       }
     }
-    List<Dependency> dependencies = project.getDependencies();
-    dependencies.parallelStream()
-        .filter(d -> !project.getGroupId().equals(d.getGroupId()))
-        .filter(d -> scope == null || scope.isEmpty() || scope.equals(d.getScope()))
-        .forEach(dependency -> {
-          LicensesRepository licensesRepository = parse
-              .parseLicense(dependency.getGroupId(), dependency.getArtifactId(),
-                  dependency.getVersion());
-          licensesRepository.download(path, notices);
-        });
-    notices.stream().forEach(line -> getLog().info(line));
-    if (project.isExecutionRoot()) {
-      //registerEventMonitor();
+    try (BufferedWriter writer = new BufferedWriter(
+        new FileWriter(path.toAbsolutePath() + "/NOTICE"))) {
+      for (String l : notices) {
+        writer.write(l + "\r\n");
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
-    note.add("1");
   }
 
 //  protected MavenSession session;

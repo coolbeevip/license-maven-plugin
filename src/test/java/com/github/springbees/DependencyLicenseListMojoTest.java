@@ -2,8 +2,6 @@ package com.github.springbees;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -35,12 +33,12 @@ public class DependencyLicenseListMojoTest {
   }
 
   @Test
-  public void downloadTest() {
+  public void noticesTest() {
     List<String> notices = new ArrayList<>();
-    Path path = Paths.get("data/dependencies_license");
     Parse parse = new ParseMvnRepository();
     LicensesRepository licensesRepository = parse
         .parseLicense("org.mockito", "mockito-core", "2.23.4");
-    licensesRepository.download(path,notices);
+    licensesRepository.saveNotices(notices);
+    assertEquals(notices.size(),5);
   }
 }
