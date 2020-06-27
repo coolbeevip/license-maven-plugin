@@ -1,0 +1,12 @@
+安装
+
+----
+./mvnw clean install
+----
+
+在你的项目根目录下执行
+
+----
+./mvnw com.github.spring-bees:license-maven-plugin:1.0.0-SNAPSHOT:dependency-license-list
+./mvnw com.github.spring-bees:license-maven-plugin:1.0.0-SNAPSHOT:dependency-license-notice
+----

@@ -1,0 +1,10 @@
+# idea
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# maven
+target/
+*.releaseBackup
