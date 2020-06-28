@@ -15,7 +15,7 @@ public class ParseMvnRepository implements Parse {
         baseUrl + groupId + "/" + artifactId + "/" + version;
     try {
       Document doc = Jsoup.connect(url)
-          .timeout(4000)
+          .timeout(60000)
           .userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0")
           .get();
       Elements licensesBody = doc.select(".version-section h2:contains(Licenses)").next()
