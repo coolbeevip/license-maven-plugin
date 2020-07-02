@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Test;
 
 public class DependencyLicenseListMojoTest {
@@ -16,7 +17,7 @@ public class DependencyLicenseListMojoTest {
   public void licenseTest() {
     Parse parse = new ParseMvnRepository();
     LicensesRepository licensesRepository = parse
-        .parseLicense("org.mockito", "mockito-core", "2.23.4");
+        .parseLicense(Optional.empty(), "org.mockito", "mockito-core", "2.23.4");
     licensesRepository.getLicenseEntries().stream().forEach(entry -> {
       assertEquals(entry.toString(), "org.mockito:mockito-core:2.23.4[The MIT License]");
     });
@@ -25,7 +26,7 @@ public class DependencyLicenseListMojoTest {
   @Test
   public void duplicateLicenseTest() {
     LicensesRepository licensesRepository = parse
-        .parseLicense("mysql", "mysql-connector-java", "8.0.15");
+        .parseLicense(Optional.empty(),"mysql", "mysql-connector-java", "8.0.15");
     licensesRepository.getLicenseEntries().stream().forEach(entry -> {
       assertEquals(entry.toString(),
           "mysql:mysql-connector-java:8.0.15[The GNU General Public License, v2 with FOSS exception]");
@@ -37,7 +38,7 @@ public class DependencyLicenseListMojoTest {
     List<String> notices = new ArrayList<>();
     Parse parse = new ParseMvnRepository();
     LicensesRepository licensesRepository = parse
-        .parseLicense("org.mockito", "mockito-core", "2.23.4");
+        .parseLicense(Optional.empty(),"org.mockito", "mockito-core", "2.23.4");
     licensesRepository.saveNotices(notices);
     assertEquals(notices.size(),5);
   }

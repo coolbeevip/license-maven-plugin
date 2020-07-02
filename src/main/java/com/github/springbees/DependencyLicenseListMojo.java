@@ -1,6 +1,7 @@
 package com.github.springbees;
 
 import java.util.List;
+import java.util.Optional;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -45,7 +46,7 @@ public class DependencyLicenseListMojo
         .filter(d -> scope == null || scope.isEmpty() || scope.equals(d.getScope()))
         .forEach(dependency -> {
           LicensesRepository licensesRepository = parse
-              .parseLicense(dependency.getGroupId(), dependency.getArtifactId(),
+              .parseLicense(Optional.of(getLog()),dependency.getGroupId(), dependency.getArtifactId(),
                   dependency.getVersion());
           licensesRepository.list(getLog());
         });

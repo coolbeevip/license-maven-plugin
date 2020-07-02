@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -68,7 +69,7 @@ public class AggregateLicenseNoticeMojo
                 "NOTICE parse " + dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
                     + dependency.getVersion());
             LicensesRepository licensesRepository = parse
-                .parseLicense(dependency.getGroupId(), dependency.getArtifactId(),
+                .parseLicense(Optional.of(getLog()), dependency.getGroupId(), dependency.getArtifactId(),
                     dependency.getVersion());
             licensesRepositories.add(licensesRepository);
           });
