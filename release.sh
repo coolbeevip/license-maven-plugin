@@ -89,7 +89,7 @@ main(){
   NEXT_VERSION=$(increment_version $RELEASE_VERSION 1)-SNAPSHOT
 
   echo "===================================================================="
-  echo "发布工作目录: $WORK_DIR/nc"
+  echo "发布工作目录: $WORK_DIR/$PROJECT_NAME"
   echo "当前版本号: $CURRENT_VERSION"
   echo "版本维护分支名: $RELEASE_BRANCH"
   echo "发布版本号: $RELEASE_VERSION"
