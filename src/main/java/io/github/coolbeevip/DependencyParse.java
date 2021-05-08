@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.github.coolbeevip;
+package io.github.coolbeevip;
 
-import com.github.coolbeevip.storage.MavenRepositoryStorage;
+import io.github.coolbeevip.storage.MavenRepositoryStorage;
 import java.util.Optional;
 import org.apache.maven.plugin.logging.Log;
 

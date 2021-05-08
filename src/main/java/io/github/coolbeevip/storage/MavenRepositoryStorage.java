@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.coolbeevip.storage;
+package io.github.coolbeevip.storage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.coolbeevip.pojo.DependencyEntry;
+import io.github.coolbeevip.pojo.DependencyEntry;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 import org.mapdb.DB;

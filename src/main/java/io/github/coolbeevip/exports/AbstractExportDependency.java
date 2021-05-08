@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.coolbeevip.exports;
+package io.github.coolbeevip.exports;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.coolbeevip.DependencyExport;
-import com.github.coolbeevip.pojo.DependencyEntry;
-import com.github.coolbeevip.storage.MavenRepositoryStorage;
+import io.github.coolbeevip.DependencyExport;
+import io.github.coolbeevip.pojo.DependencyEntry;
+import io.github.coolbeevip.storage.MavenRepositoryStorage;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;

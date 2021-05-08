@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.coolbeevip.parse;
+package io.github.coolbeevip.parse;
 
-import com.github.coolbeevip.storage.MavenRepositoryStorage;
-import com.github.coolbeevip.DependencyParse;
-import com.github.coolbeevip.pojo.DependencyEntry;
+import io.github.coolbeevip.storage.MavenRepositoryStorage;
+import io.github.coolbeevip.DependencyParse;
+import io.github.coolbeevip.pojo.DependencyEntry;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;

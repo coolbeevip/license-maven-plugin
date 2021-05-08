@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.github.coolbeevip.exports;
+package io.github.coolbeevip.exports;
 
-import com.github.coolbeevip.pojo.DependencyEntry;
+import io.github.coolbeevip.pojo.DependencyEntry;
 import java.util.List;
 import java.util.stream.Collectors;
 

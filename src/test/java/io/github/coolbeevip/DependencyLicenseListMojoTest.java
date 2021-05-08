@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.github.coolbeevip;
+package io.github.coolbeevip;
 
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.coolbeevip.parse.ParseMavenCentralRepositorySearch;
-import com.github.coolbeevip.pojo.DependencyEntry;
-import com.github.coolbeevip.storage.MavenRepositoryStorage;
+import io.github.coolbeevip.parse.ParseMavenCentralRepositorySearch;
+import io.github.coolbeevip.pojo.DependencyEntry;
+import io.github.coolbeevip.storage.MavenRepositoryStorage;
 import java.util.Optional;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

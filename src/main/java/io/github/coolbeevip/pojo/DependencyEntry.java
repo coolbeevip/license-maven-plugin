@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.coolbeevip.pojo;
+package io.github.coolbeevip.pojo;
 
 import java.util.HashMap;
 import java.util.Map;

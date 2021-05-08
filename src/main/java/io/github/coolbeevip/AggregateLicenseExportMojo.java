@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.coolbeevip;
+package io.github.coolbeevip;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.coolbeevip.exports.ExportDependencyToCsv;
-import com.github.coolbeevip.exports.ExportDependencyToNotice;
-import com.github.coolbeevip.parse.ParseMavenCentralRepositorySearch;
+import io.github.coolbeevip.exports.ExportDependencyToCsv;
+import io.github.coolbeevip.exports.ExportDependencyToNotice;
+import io.github.coolbeevip.parse.ParseMavenCentralRepositorySearch;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;

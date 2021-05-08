@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.coolbeevip;
+package io.github.coolbeevip;
 
 import java.nio.file.Path;
 import java.util.List;
