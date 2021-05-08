@@ -5,5 +5,8 @@ import org.apache.maven.plugin.logging.Log;
 
 public interface Parse {
 
-  LicensesRepository parseLicense(Optional<Log> log, String groupId, String artifactId, String version);
+  void open(String dbfile);
+  void close();
+  MavenRepositoryStore parseLicense(Optional<Log> log, String groupId, String artifactId, String version);
+
 }

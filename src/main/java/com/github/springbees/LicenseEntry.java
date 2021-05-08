@@ -54,7 +54,7 @@ public class LicenseEntry {
   }
 
   public String getHomePage() {
-    return homePage == null || homePage.trim().length() == 0 ? "<<empty>>" : homePage;
+    return this.homePage;
   }
 
   public void setHomePage(String homePage) {
@@ -77,7 +77,7 @@ public class LicenseEntry {
   @Override
   public String toString() {
     return groupId + ':' + artifactId + ":" + version + "[" + String.join(",", license.keySet())
-        + "]";
+      + "]";
   }
 
   @Override
@@ -91,8 +91,8 @@ public class LicenseEntry {
     if (obj instanceof LicenseEntry) {
       LicenseEntry element = (LicenseEntry) obj;
       if (element.groupId.equals(this.groupId)
-          && element.artifactId.equals(this.artifactId)
-          && element.version.equals(this.version)) {
+        && element.artifactId.equals(this.artifactId)
+        && element.version.equals(this.version)) {
         return true;
       }
     }

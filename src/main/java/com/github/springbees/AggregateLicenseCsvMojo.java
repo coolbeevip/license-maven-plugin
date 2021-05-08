@@ -19,8 +19,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-@Mojo(name = "dependency-license-notice", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true, aggregator = true)
-public class AggregateLicenseNoticeMojo extends AbstractMojo {
+@Mojo(name = "dependency-license-csv", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true, aggregator = true)
+public class AggregateLicenseCsvMojo extends AbstractMojo {
 
   final ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -51,9 +51,11 @@ public class AggregateLicenseNoticeMojo extends AbstractMojo {
     if (dbfile == null) {
       dbfile = "mvnrepository.mapdb";
     }
+    getLog().info("db file: " + dbfile);
     parse.open(dbfile);
     try {
       List<String> notices = new ArrayList<>();
+      notices.add("groupId\tartifactId\tversion\tlicense\torganization\turl");
       Path path = Paths.get(projectBuildDirectory + "/distribute");
       reactorProjects.stream().forEach(project -> {
         List<Dependency> dependencies = project.getDependencies();
@@ -76,13 +78,14 @@ public class AggregateLicenseNoticeMojo extends AbstractMojo {
         }
       }).forEach(entry -> {
         if (entry != null) {
-          notices.add("===========================================================================");
-          notices.add("Includes content from " + (entry.getOrganization().trim().length() == 0 ? entry.getGroupId() : entry.getOrganization()));
-          notices.add(entry.getOrganizationUrl().trim().length() == 0 ? entry.getHomePage() : entry.getOrganizationUrl());
-          String lic = entry.getLicense().entrySet().stream().map(entry1 -> entry1.getKey() + " (" + entry1.getValue() + ")").collect(Collectors.joining(","));
-          notices.add("* " + entry.getArtifactId() + ", Version " + entry.getVersion() + " (" + entry.getHomePage() + ") under " + lic);
-          notices.add("");
-          getLog().info("license:"+entry.getGroupId() + ":" + entry.getArtifactId() + ":" + entry.getVersion());
+          String line = String
+            .format("%s\t%s\t%s\t%s\t%s\t%s", entry.getGroupId(), entry.getArtifactId(),
+              entry.getVersion(),
+              entry.getLicense().keySet().stream().collect(Collectors.joining("/")),
+              entry.getOrganization(),
+              entry.getHomePage());
+          notices.add(line);
+          getLog().info(line);
         }
       });
 
@@ -94,14 +97,14 @@ public class AggregateLicenseNoticeMojo extends AbstractMojo {
         }
       }
       try (BufferedWriter writer = new BufferedWriter(
-        new FileWriter(path.toAbsolutePath() + "/NOTICE"))) {
+        new FileWriter(path.toAbsolutePath() + "/NOTICE.CSV"))) {
         for (String l : notices) {
           writer.write(l + "\r\n");
         }
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
-      getLog().info("write " + path.toAbsolutePath() + "/NOTICE");
+      getLog().info("write " + path.toAbsolutePath() + "/NOTICE.CSV");
     } finally {
       parse.close();
     }
