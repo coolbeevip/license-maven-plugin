@@ -1,0 +1,23 @@
+<settings>
+
+  <servers>
+    <server>
+      <id>ossrh</id>
+      <username>zhangleisonatype</username>
+      <password>Zl%18610099300</password>
+    </server>
+  </servers>
+
+  <profiles>
+    <profile>
+      <id>ossrh</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <gpg.executable>gpg2</gpg.executable>
+        <gpg.passphrase>Zl18610099300</gpg.passphrase>
+      </properties>
+    </profile>
+  </profiles>
+</settings>
