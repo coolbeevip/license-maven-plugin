@@ -1,9 +1,9 @@
-package com.github.springbees;
+package com.github.springbees.pojo;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class LicenseEntry {
+public class DependencyEntry {
 
   private String groupId;
   private String artifactId;
@@ -88,8 +88,8 @@ public class LicenseEntry {
     if (this == obj) {
       return true;
     }
-    if (obj instanceof LicenseEntry) {
-      LicenseEntry element = (LicenseEntry) obj;
+    if (obj instanceof DependencyEntry) {
+      DependencyEntry element = (DependencyEntry) obj;
       if (element.groupId.equals(this.groupId)
         && element.artifactId.equals(this.artifactId)
         && element.version.equals(this.version)) {

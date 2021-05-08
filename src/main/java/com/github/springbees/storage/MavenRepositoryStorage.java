@@ -1,28 +1,29 @@
-package com.github.springbees;
+package com.github.springbees.storage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.springbees.pojo.DependencyEntry;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 
-public class MavenRepositoryStore {
+public class MavenRepositoryStorage {
 
   final ObjectMapper jsonMapper = new ObjectMapper();
   DB db;
   ConcurrentMap<String,String> dependencies;
-  private static MavenRepositoryStore INSTANCE;
+  private static MavenRepositoryStorage INSTANCE;
 
-  public synchronized static MavenRepositoryStore getInstance() {
+  public synchronized static MavenRepositoryStorage getInstance() {
     if (INSTANCE == null) {
-      INSTANCE = new MavenRepositoryStore();
+      INSTANCE = new MavenRepositoryStorage();
     }
     return INSTANCE;
   }
 
-  public void put(LicenseEntry licenseEntry) throws JsonProcessingException {
+  public void put(DependencyEntry licenseEntry) throws JsonProcessingException {
     if (!exits(licenseEntry)) {
       dependencies.put(
         getKey(licenseEntry.getGroupId(), licenseEntry.getArtifactId(), licenseEntry.getVersion()),
@@ -34,10 +35,10 @@ public class MavenRepositoryStore {
     }
   }
 
-  public LicenseEntry get(String groupId, String artifactId, String version)
+  public DependencyEntry get(String groupId, String artifactId, String version)
     throws JsonProcessingException {
     String value = dependencies.get(getKey(groupId, artifactId, version));
-    return jsonMapper.readValue(value,LicenseEntry.class);
+    return jsonMapper.readValue(value, DependencyEntry.class);
   }
 
   public Stream<String> stream(){
@@ -48,7 +49,7 @@ public class MavenRepositoryStore {
     return dependencies.containsKey(getKey(groupId, artifactId, version));
   }
 
-  private boolean exits(LicenseEntry licenseEntry) {
+  private boolean exits(DependencyEntry licenseEntry) {
     return dependencies.containsKey(
       getKey(licenseEntry.getGroupId(), licenseEntry.getArtifactId(), licenseEntry.getVersion()));
   }

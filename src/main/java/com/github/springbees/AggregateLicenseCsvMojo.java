@@ -2,6 +2,9 @@ package com.github.springbees;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.springbees.parse.ParseMavenCentralRepositorySearch;
+import com.github.springbees.pojo.DependencyEntry;
+import com.github.springbees.storage.MavenRepositoryStorage;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,7 +47,7 @@ public class AggregateLicenseCsvMojo extends AbstractMojo {
 
   private List<String> ignoreGroupIds = new ArrayList<>();
 
-  Parse parse = new ParseSonaTypeRepository();
+  Parse parse = new ParseMavenCentralRepositorySearch();
 
   @Override
   public void execute() {
@@ -69,10 +72,10 @@ public class AggregateLicenseCsvMojo extends AbstractMojo {
           });
       });
 
-      MavenRepositoryStore store = MavenRepositoryStore.getInstance();
+      MavenRepositoryStorage store = MavenRepositoryStorage.getInstance();
       store.stream().sorted().map(v -> {
         try {
-          return jsonMapper.readValue(v, LicenseEntry.class);
+          return jsonMapper.readValue(v, DependencyEntry.class);
         } catch (JsonProcessingException e) {
           return null;
         }

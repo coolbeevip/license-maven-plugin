@@ -1,5 +1,8 @@
-package com.github.springbees;
+package com.github.springbees.parse;
 
+import com.github.springbees.storage.MavenRepositoryStorage;
+import com.github.springbees.Parse;
+import com.github.springbees.pojo.DependencyEntry;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
@@ -14,25 +17,25 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 /**
  * @author zhanglei
  */
-public class ParseSonaTypeRepository implements Parse {
+public class ParseMavenCentralRepositorySearch implements Parse {
 
-  final MavenRepositoryStore store = MavenRepositoryStore.getInstance();
+  final MavenRepositoryStorage store = MavenRepositoryStorage.getInstance();
   final WebDriver driver = new ChromeDriver(DesiredCapabilities.chrome());
   final SecureRandom random = new SecureRandom();
 
   final String baseUrl = "https://search.maven.org/artifact/";
 
-  public ParseSonaTypeRepository() {
+  public ParseMavenCentralRepositorySearch() {
     driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
     final SecureRandom random = new SecureRandom();
   }
 
   @Override
-  public MavenRepositoryStore parseLicense(Optional<Log> log, String groupId, String artifactId,
+  public MavenRepositoryStorage parseLicense(Optional<Log> log, String groupId, String artifactId,
     String version) {
 
     if(!store.exits(groupId,artifactId,version)){
-      LicenseEntry licenseEntry = new LicenseEntry();
+      DependencyEntry licenseEntry = new DependencyEntry();
       licenseEntry.setGroupId(groupId);
       licenseEntry.setArtifactId(artifactId);
       licenseEntry.setVersion(version);

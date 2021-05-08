@@ -2,6 +2,9 @@ package com.github.springbees;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.springbees.parse.ParseMavenCentralRepositorySearch;
+import com.github.springbees.pojo.DependencyEntry;
+import com.github.springbees.storage.MavenRepositoryStorage;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,7 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Dependency;
@@ -44,7 +49,7 @@ public class AggregateLicenseNoticeMojo extends AbstractMojo {
 
   private List<String> ignoreGroupIds = new ArrayList<>();
 
-  Parse parse = new ParseSonaTypeRepository();
+  Parse parse = new ParseMavenCentralRepositorySearch();
 
   @Override
   public void execute() {
@@ -67,23 +72,39 @@ public class AggregateLicenseNoticeMojo extends AbstractMojo {
           });
       });
 
-      MavenRepositoryStore store = MavenRepositoryStore.getInstance();
+      Map<String, List<DependencyEntry>> groupDependencies = new HashMap<>();
+      MavenRepositoryStorage store = MavenRepositoryStorage.getInstance();
       store.stream().sorted().map(v -> {
         try {
-          return jsonMapper.readValue(v, LicenseEntry.class);
+          return jsonMapper.readValue(v, DependencyEntry.class);
         } catch (JsonProcessingException e) {
           return null;
         }
       }).forEach(entry -> {
         if (entry != null) {
-          notices.add("===========================================================================");
-          notices.add("Includes content from " + (entry.getOrganization().trim().length() == 0 ? entry.getGroupId() : entry.getOrganization()));
-          notices.add(entry.getOrganizationUrl().trim().length() == 0 ? entry.getHomePage() : entry.getOrganizationUrl());
-          String lic = entry.getLicense().entrySet().stream().map(entry1 -> entry1.getKey() + " (" + entry1.getValue() + ")").collect(Collectors.joining(","));
-          notices.add("* " + entry.getArtifactId() + ", Version " + entry.getVersion() + " (" + entry.getHomePage() + ") under " + lic);
-          notices.add("");
-          getLog().info("license:"+entry.getGroupId() + ":" + entry.getArtifactId() + ":" + entry.getVersion());
+          if (groupDependencies.containsKey(entry.getGroupId())) {
+            groupDependencies.get(entry.getGroupId()).add(entry);
+          } else {
+            List<DependencyEntry> dependencyEntries = new ArrayList<>();
+            dependencyEntries.add(entry);
+            groupDependencies.put(entry.getGroupId(), dependencyEntries);
+          }
         }
+      });
+
+      groupDependencies.entrySet().stream().forEach(entry -> {
+        String groupId = entry.getKey();
+        notices.add("===========================================================================");
+        notices.add("Includes content from " + groupId);
+        notices.add(entry.getValue().stream().findAny().get().getOrganization());
+        entry.getValue().stream().forEach(e -> {
+          String lic = e.getLicense().entrySet().stream()
+            .map(entry1 -> entry1.getKey() + " (" + entry1.getValue() + ")")
+            .collect(Collectors.joining(","));
+          notices.add("* " + e.getArtifactId() + ", Version " + e.getVersion() + " (" + e
+            .getHomePage() + ") under " + lic);
+        });
+        notices.add("");
       });
 
       if (!Files.exists(path)) {
@@ -105,6 +126,10 @@ public class AggregateLicenseNoticeMojo extends AbstractMojo {
     } finally {
       parse.close();
     }
+  }
+
+  private void output() {
+
   }
 
 }
