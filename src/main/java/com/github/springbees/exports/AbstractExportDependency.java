@@ -1,7 +1,8 @@
-package com.github.springbees;
+package com.github.springbees.exports;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.springbees.DependencyExport;
 import com.github.springbees.pojo.DependencyEntry;
 import com.github.springbees.storage.MavenRepositoryStorage;
 import java.io.BufferedWriter;
@@ -10,14 +11,23 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.maven.plugin.logging.Log;
 
-public class ExportCSV implements Export {
-  final ObjectMapper jsonMapper = new ObjectMapper();
+public abstract class AbstractExportDependency implements DependencyExport {
+
+  public final ObjectMapper jsonMapper = new ObjectMapper();
+
+  abstract void exportBefore(List<String> notices);
+
+  abstract void exportContent(List<String> notices, DependencyEntry entry);
+
+  abstract void exportContentAfter(List<String> notices);
+
+  abstract String getExportFileName();
+
   @Override
-  public void export(Log log,List<String> notices, Path path) {
-    notices.add("groupId\tartifactId\tversion\tlicense\torganization\turl");
+  public void export(Log log, List<String> notices, Path path) {
+    exportBefore(notices);
     MavenRepositoryStorage store = MavenRepositoryStorage.getInstance();
     store.stream().sorted().map(v -> {
       try {
@@ -27,16 +37,10 @@ public class ExportCSV implements Export {
       }
     }).forEach(entry -> {
       if (entry != null) {
-        String line = String
-          .format("%s\t%s\t%s\t%s\t%s\t%s", entry.getGroupId(), entry.getArtifactId(),
-            entry.getVersion(),
-            entry.getLicense().keySet().stream().collect(Collectors.joining("/")),
-            entry.getOrganization(),
-            entry.getHomePage());
-        notices.add(line);
-        log.info(line);
+        exportContent(notices, entry);
       }
     });
+    exportContentAfter(notices);
     if (!Files.exists(path)) {
       try {
         Files.createDirectories(path);
@@ -45,13 +49,13 @@ public class ExportCSV implements Export {
       }
     }
     try (BufferedWriter writer = new BufferedWriter(
-      new FileWriter(path.toAbsolutePath() + "/NOTICE.CSV"))) {
+      new FileWriter(path.toAbsolutePath() + "/" + getExportFileName()))) {
       for (String l : notices) {
         writer.write(l + "\r\n");
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    log.info("write " + path.toAbsolutePath() + "/NOTICE.CSV");
+    log.info("write " + path.toAbsolutePath() + "/" + getExportFileName());
   }
 }

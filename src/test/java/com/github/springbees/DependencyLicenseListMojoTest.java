@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class DependencyLicenseListMojoTest {
 
-  final static Parse parse = new ParseMavenCentralRepositorySearch();
+  final static DependencyParse parse = new ParseMavenCentralRepositorySearch();
   final static MavenRepositoryStorage store = MavenRepositoryStorage.getInstance();
 
   @Test

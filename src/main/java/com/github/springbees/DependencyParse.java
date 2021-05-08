@@ -4,7 +4,7 @@ import com.github.springbees.storage.MavenRepositoryStorage;
 import java.util.Optional;
 import org.apache.maven.plugin.logging.Log;
 
-public interface Parse {
+public interface DependencyParse {
 
   void open(String dbfile);
 

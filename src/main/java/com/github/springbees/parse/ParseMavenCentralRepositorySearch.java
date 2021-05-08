@@ -1,7 +1,7 @@
 package com.github.springbees.parse;
 
 import com.github.springbees.storage.MavenRepositoryStorage;
-import com.github.springbees.Parse;
+import com.github.springbees.DependencyParse;
 import com.github.springbees.pojo.DependencyEntry;
 import java.security.SecureRandom;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 /**
  * @author zhanglei
  */
-public class ParseMavenCentralRepositorySearch implements Parse {
+public class ParseMavenCentralRepositorySearch implements DependencyParse {
 
   final MavenRepositoryStorage store = MavenRepositoryStorage.getInstance();
   final WebDriver driver = new ChromeDriver(DesiredCapabilities.chrome());

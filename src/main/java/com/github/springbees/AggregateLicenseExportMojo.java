@@ -1,6 +1,8 @@
 package com.github.springbees;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.springbees.exports.ExportDependencyToCsv;
+import com.github.springbees.exports.ExportDependencyToNotice;
 import com.github.springbees.parse.ParseMavenCentralRepositorySearch;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,9 +44,9 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
 
   private List<String> ignoreGroupIds = new ArrayList<>();
 
-  Parse parse = new ParseMavenCentralRepositorySearch();
+  DependencyParse parse = new ParseMavenCentralRepositorySearch();
 
-  Export export;
+  DependencyExport export;
 
   @Override
   public void execute() {
@@ -54,9 +56,9 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
     getLog().info("export cache db file: " + dbfile);
 
     if (format.equals("csv")) {
-      export = new ExportCSV();
+      export = new ExportDependencyToCsv();
     } else if (format.equals("notice")) {
-      export = new ExportNOTICE();
+      export = new ExportDependencyToNotice();
     }
 
     getLog().info("export format: " + format);
