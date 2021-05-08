@@ -43,16 +43,16 @@ release_func(){
   git checkout -b $RELEASE_BRANCH
   git push origin $RELEASE_BRANCH
 
-  echo "创建 $RELEASE_VERSION TAG......"
+  echo "创建 v$RELEASE_VERSION TAG......"
   git checkout master
-  ./mvnw versions:set-property -Dproperty=version -DnewVersion=$RELEASE_VERSION
+  ./mvnw versions:set -DnewVersion=$RELEASE_VERSION
   ./mvnw versions:commit
   git commit -a -m "Upgrade Version to $RELEASE_VERSION"
-  git tag -a $RELEASE_VERSION -m "Release $RELEASE_VERSION"
-  git push origin $RELEASE_VERSION
+  git tag -a v$RELEASE_VERSION -m "Release v$RELEASE_VERSION"
+  git push origin v$RELEASE_VERSION
 
   echo "更新主干版本号为 $NEXT_VERSION..."
-  ./mvnw versions:set-property -Dproperty=version -DnewVersion=$NEXT_VERSION
+  ./mvnw versions:set -DnewVersion=$NEXT_VERSION
   ./mvnw versions:commit
   git commit -a -m "Upgrade Release Version $NEXT_VERSION"
   git push origin master
