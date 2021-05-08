@@ -27,7 +27,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class DependencyLicenseListMojoTest {
+public class DependencyLicenseListMojo {
 
   final static DependencyParse parse = new ParseMavenCentralRepositorySearch();
   final static MavenRepositoryStorage store = MavenRepositoryStorage.getInstance();
