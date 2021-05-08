@@ -8,9 +8,14 @@ brew install --cask chromedriver
 ./mvnw clean install -DskipTests
 ----
 
+导出项目 License 信息
+
+* format 导出格式 csv,notice
+* dbfile 缓存文件
+
 在你的项目根目录下执行
 
 ----
-./mvnw clean com.github.spring-bees:license-maven-plugin:1.0.0-SNAPSHOT:dependency-license-csv -Ddbfile=/Users/zhanglei/github/license-maven-plugin/db/mvnrepository.mapdb
-./mvnw clean com.github.spring-bees:license-maven-plugin:1.0.0-SNAPSHOT:dependency-license-notice -Ddbfile=/Users/zhanglei/github/license-maven-plugin/db/mvnrepository.mapdb
+./mvnw clean com.github.spring-bees:license-maven-plugin:1.0.0-SNAPSHOT:dependency-license-export -Dformat=csv -Ddbfile=/Users/zhanglei/github/license-maven-plugin/db/mvnrepository.mapdb
+./mvnw clean com.github.spring-bees:license-maven-plugin:1.0.0-SNAPSHOT:dependency-license-export -Dformat=notice -Ddbfile=/Users/zhanglei/github/license-maven-plugin/db/mvnrepository.mapdb
 ----
