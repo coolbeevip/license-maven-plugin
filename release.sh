@@ -97,7 +97,7 @@ main(){
   echo "===================================================================="
   while true
   do
-    read -p "下一步将创建 $RELEASE_BRANCH 分支, $RELEASE_VERSION TAG, 并将主干版本号改为 $NEXT_VERSION, 确认请输入(Y/N): " input
+    read -p "下一步将创建 $RELEASE_BRANCH 分支, v$RELEASE_VERSION TAG, 并将主干版本号改为 $NEXT_VERSION, 确认请输入(Y/N): " input
 
     case $input in
         [yY])
