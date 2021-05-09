@@ -9,7 +9,7 @@
 #### 导出 CSV 格式
 
 ```
-./mvnw io.github.coolbeevip:license-maven-plugin:1.3.0:dependency-license-export -Dformat=csv
+./mvnw io.github.coolbeevip:license-maven-plugin:1.4.0:dependency-license-export -Dformat=csv
 ```
 
 生成 [NOTICE.CSV](samples/NOTICE.CSV) 样例文件
@@ -17,7 +17,7 @@
 #### 导出 TXT 格式
 
 ```
-./mvnw io.github.coolbeevip:license-maven-plugin:1.3.0:dependency-license-export -Dformat=txt
+./mvnw io.github.coolbeevip:license-maven-plugin:1.4.0:dependency-license-export -Dformat=txt
 ```
 
 生成 [NOTICE.TXT](samples/NOTICE.TXT) 样例文件
