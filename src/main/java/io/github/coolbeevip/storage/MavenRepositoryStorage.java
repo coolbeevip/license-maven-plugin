@@ -19,6 +19,7 @@ package io.github.coolbeevip.storage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.coolbeevip.pojo.DependencyEntry;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -71,8 +72,8 @@ public class MavenRepositoryStorage {
     return jsonMapper.readValue(value, DependencyEntry.class);
   }
 
-  public Stream<String> stream() {
-    return dependencies.values().stream();
+  public Stream<Entry<String, String>> stream() {
+    return dependencies.entrySet().stream();
   }
 
   public boolean exits(String groupId, String artifactId, String version) {

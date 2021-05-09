@@ -21,8 +21,10 @@ import io.github.coolbeevip.DependencyParse;
 import io.github.coolbeevip.pojo.DependencyEntry;
 import io.github.coolbeevip.storage.MavenRepositoryStorage;
 import java.security.SecureRandom;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.maven.plugin.logging.Log;
@@ -43,10 +45,13 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
   final Optional<Log> log;
   final String baseUrl = "https://search.maven.org/artifact/";
   final Boolean licenseEnabled;
+  final Set<String> skips = new HashSet<>();
+  final int timeout;
 
-  public ParseMavenCentralRepositorySearch(Optional<Log> log, Boolean license) {
+  public ParseMavenCentralRepositorySearch(Optional<Log> log, Boolean license, int timeout) {
     this.log = log;
     this.store = MavenRepositoryStorage.getInstance(log);
+    this.timeout = timeout;
     this.licenseEnabled = license;
     log.ifPresent(l -> {
       if (this.licenseEnabled) {
@@ -57,7 +62,7 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
     });
     if (this.licenseEnabled) {
       this.driver = new ChromeDriver(DesiredCapabilities.chrome());
-      this.driver.manage().timeouts().implicitlyWait(5, TimeUnit.MINUTES);
+      this.driver.manage().timeouts().implicitlyWait(timeout, TimeUnit.SECONDS);
     } else {
       this.driver = null;
     }
@@ -86,54 +91,71 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
       dependencyEntry.setArtifactId(artifactId);
       dependencyEntry.setVersion(version);
 
-      String url = baseUrl + groupId + "/" + artifactId + "/" + version + "/jar";
-      String organization = "";
-      String organizationUrl = "";
-      String homePage = "";
-      String licenseName = null;
-      String licenseUrl = null;
+      String skipKey = dependencyEntry.getGroupId()+":"+dependencyEntry.getArtifactId()+":"+dependencyEntry.getVersion();
+      if(!skips.contains(skipKey)){
+        if (log.isPresent()) {
+          String info = String.format("Analyse %s:%s:%s",
+              dependencyEntry.getGroupId(),
+              dependencyEntry.getArtifactId(),
+              dependencyEntry.getVersion());
+          log.get().info(info);
+        }
 
-      try {
-        if (licenseEnabled) {
-          driver.get(url);
-          WebElement webElement = driver.findElement(By.tagName("app-artifact-description"));
-          if (webElement.isDisplayed()) {
-            List<WebElement> trList = webElement.findElements(By.tagName("tr"));
-            for (WebElement tr : trList) {
-              WebElement th = tr.findElement(By.tagName("th"));
-              WebElement td = tr.findElement(By.tagName("td"));
-              if (th.getText().startsWith("Organization")) {
-                organization = td.getText();
-              } else if (th.getText().startsWith("Home page")) {
-                homePage = td.getText();
-              } else if (th.getText().startsWith("Source code")) {
-                organizationUrl = td.getText();
-                licenseUrl = td.getText();
-              } else if (th.getText().startsWith("Licenses")) {
-                licenseName = td.getText();
+        String url = baseUrl + groupId + "/" + artifactId + "/" + version + "/jar";
+        String organization = "";
+        String organizationUrl = "";
+        String homePage = "";
+        String licenseName = null;
+        String licenseUrl = null;
+
+        try {
+          if (licenseEnabled) {
+            driver.get(url);
+            WebElement webElement = driver.findElement(By.tagName("app-artifact-description"));
+            if (webElement.isDisplayed()) {
+              List<WebElement> trList = webElement.findElements(By.tagName("tr"));
+              for (WebElement tr : trList) {
+                WebElement th = tr.findElement(By.tagName("th"));
+                WebElement td = tr.findElement(By.tagName("td"));
+                if (th.getText().startsWith("Organization")) {
+                  organization = td.getText();
+                } else if (th.getText().startsWith("Home page")) {
+                  homePage = td.getText();
+                } else if (th.getText().startsWith("Source code")) {
+                  organizationUrl = td.getText();
+                  licenseUrl = td.getText();
+                } else if (th.getText().startsWith("Licenses")) {
+                  licenseName = td.getText();
+                }
               }
             }
           }
-        }
-        dependencyEntry.setOrganization(organization);
-        dependencyEntry.setOrganizationUrl(organizationUrl);
-        dependencyEntry.setHomePage(homePage);
-        if (licenseName != null) {
-          dependencyEntry.addLicense(licenseName, licenseUrl);
-        }
+          dependencyEntry.setOrganization(organization);
+          dependencyEntry.setOrganizationUrl(organizationUrl);
+          dependencyEntry.setHomePage(homePage);
+          if (licenseName != null) {
+            dependencyEntry.addLicense(licenseName, licenseUrl);
+          }
 
-        store.put(dependencyEntry);
-        if (log.isPresent()) {
-          String info = String.format("Analyse %s:%s:%s[%s]",
-              dependencyEntry.getGroupId(),
-              dependencyEntry.getArtifactId(),
-              dependencyEntry.getVersion(),
-              dependencyEntry.getLicense().keySet().stream().collect(Collectors.joining(",")));
-          log.get().info(info);
-        }
-      } catch (Exception ex) {
-        if (log.isPresent()) {
-          log.get().error(ex.getMessage(), ex);
+          store.put(dependencyEntry);
+          if (log.isPresent()) {
+            String info = String.format("Analyse %s:%s:%s[%s]",
+                dependencyEntry.getGroupId(),
+                dependencyEntry.getArtifactId(),
+                dependencyEntry.getVersion(),
+                dependencyEntry.getLicense().keySet().stream().collect(Collectors.joining(",")));
+            log.get().info(info);
+          }
+        } catch (Exception ex) {
+          if (log.isPresent()) {
+            String info = String.format("Analyse Failed %s:%s:%s",
+                dependencyEntry.getGroupId(),
+                dependencyEntry.getArtifactId(),
+                dependencyEntry.getVersion());
+            log.get().info(info);
+            skipKey = dependencyEntry.getGroupId()+":"+dependencyEntry.getArtifactId()+":"+dependencyEntry.getVersion();
+            skips.add(skipKey);
+          }
         }
       }
 

@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class DependencyLicenseListMojo {
 
-  final static DependencyParse parse = new ParseMavenCentralRepositorySearch(Optional.empty(),true);
+  final static DependencyParse parse = new ParseMavenCentralRepositorySearch(Optional.empty(),true,5);
   final static MavenRepositoryStorage store = MavenRepositoryStorage.getInstance(Optional.empty());
 
   @Test
@@ -56,7 +56,7 @@ public class DependencyLicenseListMojo {
 
   @BeforeClass
   public static void beforeClass() {
-    parse.open(null);
+    parse.open("/Users/zhanglei/.m2/mvnrepository.mapdb");
   }
 
   @AfterClass

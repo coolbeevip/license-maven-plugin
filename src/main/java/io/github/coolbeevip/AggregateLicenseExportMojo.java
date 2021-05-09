@@ -24,7 +24,10 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -35,6 +38,8 @@ import org.apache.maven.project.MavenProject;
 
 @Mojo(name = "dependency-license-export", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true, aggregator = true)
 public class AggregateLicenseExportMojo extends AbstractMojo {
+
+  final static String CACHE_FILE_NAME = "mvnrepository.mapdb";
 
   final ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -59,7 +64,11 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
   @Parameter(property = "license", defaultValue = "false")
   String license;
 
-  private List<String> ignoreGroupIds = new ArrayList<>();
+  @Parameter(property = "ignoreGroupIds")
+  String ignoreGroupIds;
+
+  @Parameter(property = "timeout", defaultValue = "5")
+  int timeout;
 
   DependencyParse parse;
 
@@ -74,29 +83,56 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
       getLog().info("Export Format TXT");
       export = new ExportDependencyToTxt();
     }
+
+    getLog().info("Analyse License timeout " + timeout + " sec.");
+
+    List<String> ignoreGroupIdList = new ArrayList<>();
+    if (ignoreGroupIds != null) {
+      ignoreGroupIdList = Arrays.asList(ignoreGroupIds.split(","));
+      getLog().info("Ignore GroupIds " + ignoreGroupIds);
+    }
+
     String cache = System.getProperty("user.home") + File.separator + ".m2" + File.separator
-        + "mvnrepository.mapdb";
-    parse = new ParseMavenCentralRepositorySearch(Optional.of(getLog()), Boolean.valueOf(license));
+        + CACHE_FILE_NAME;
+
+    parse = new ParseMavenCentralRepositorySearch(Optional.of(getLog()), Boolean.valueOf(license),
+        timeout);
     parse.open(cache);
+
     try {
       List<String> notices = new ArrayList<>();
       Path path = Paths.get(projectBuildDirectory + "/distribute");
+
+      Map<String, Dependency> exportDependencies = new HashMap<>();
+      List<String> finalIgnoreGroupIdList = ignoreGroupIdList;
       reactorProjects.stream().forEach(project -> {
         List<Dependency> dependencies = project.getDependencies();
         dependencies.stream()
+            .filter(d -> !finalIgnoreGroupIdList.stream()
+                .filter(groupId -> d.getGroupId().startsWith(groupId)).findAny().isPresent())
             .filter(d -> !project.getGroupId().equals(d.getGroupId()))
             .filter(d -> scope == null || scope.isEmpty() || scope.equals(d.getScope()))
             .forEach(dependency -> {
               parse.parseLicense(dependency.getGroupId(),
                   dependency.getArtifactId(),
                   dependency.getVersion());
+
+              String key = getKey(dependency.getGroupId(), dependency.getArtifactId(),
+                  dependency.getVersion());
+              if (!exportDependencies.containsKey(key)) {
+                exportDependencies.put(key, dependency);
+              }
+
             });
       });
 
-      export.export(getLog(), notices, path);
+      export.export(exportDependencies, getLog(), notices, path);
     } finally {
       parse.close();
     }
   }
 
+  private String getKey(String groupId, String artifactId, String version) {
+    return groupId + ":" + artifactId + ":" + version;
+  }
 }

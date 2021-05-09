@@ -18,9 +18,11 @@ package io.github.coolbeevip;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
 
 public interface DependencyExport {
 
-  void export(Log log,List<String> notices, Path path);
+  void export(Map<String,Dependency> exportDependencies, Log log,List<String> notices, Path path);
 }

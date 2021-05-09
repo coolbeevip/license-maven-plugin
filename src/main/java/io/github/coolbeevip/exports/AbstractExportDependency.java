@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
 
 public abstract class AbstractExportDependency implements DependencyExport {
@@ -42,10 +45,13 @@ public abstract class AbstractExportDependency implements DependencyExport {
   abstract String getExportFileName();
 
   @Override
-  public void export(Log log, List<String> notices, Path path) {
+  public void export(Map<String, Dependency> exportDependencies, Log log, List<String> notices,
+      Path path) {
     exportBefore(notices);
     MavenRepositoryStorage store = MavenRepositoryStorage.getInstance();
-    store.stream().sorted().map(v -> {
+
+    store.stream().filter(entry -> exportDependencies.containsKey(entry.getKey())).map(
+        Entry::getValue).sorted().map(v -> {
       try {
         return jsonMapper.readValue(v, DependencyEntry.class);
       } catch (JsonProcessingException e) {
@@ -65,7 +71,7 @@ public abstract class AbstractExportDependency implements DependencyExport {
       }
     }
     try (BufferedWriter writer = new BufferedWriter(
-      new FileWriter(path.toAbsolutePath() + "/" + getExportFileName()))) {
+        new FileWriter(path.toAbsolutePath() + "/" + getExportFileName()))) {
       for (String l : notices) {
         writer.write(l + "\r\n");
       }
