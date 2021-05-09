@@ -16,6 +16,7 @@
 
 package io.github.coolbeevip.parse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.coolbeevip.DependencyParse;
 import io.github.coolbeevip.pojo.DependencyEntry;
 import io.github.coolbeevip.storage.MavenRepositoryStorage;
@@ -23,6 +24,7 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import org.apache.maven.plugin.logging.Log;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -55,7 +57,7 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
     });
     if (this.licenseEnabled) {
       this.driver = new ChromeDriver(DesiredCapabilities.chrome());
-      this.driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+      this.driver.manage().timeouts().implicitlyWait(5, TimeUnit.MINUTES);
     } else {
       this.driver = null;
     }
@@ -65,7 +67,20 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
   public MavenRepositoryStorage parseLicense(String groupId, String artifactId,
       String version) {
 
-    if (!store.exits(groupId, artifactId, version)) {
+    DependencyEntry cacheDependencyEntry = null;
+    if (store.exits(groupId, artifactId, version)) {
+      try {
+        DependencyEntry dependencyEntry = store.get(groupId, artifactId, version);
+        if (!dependencyEntry.getLicense().isEmpty()) {
+          cacheDependencyEntry = dependencyEntry;
+        }
+      } catch (JsonProcessingException e) {
+        if (log.isPresent()) {
+          log.get().error(e.getMessage(), e);
+        }
+      }
+    }
+    if (cacheDependencyEntry == null) {
       DependencyEntry dependencyEntry = new DependencyEntry();
       dependencyEntry.setGroupId(groupId);
       dependencyEntry.setArtifactId(artifactId);
@@ -75,8 +90,8 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
       String organization = "";
       String organizationUrl = "";
       String homePage = "";
-      String licenseName = "";
-      String licenseUrl = "";
+      String licenseName = null;
+      String licenseUrl = null;
 
       try {
         if (licenseEnabled) {
@@ -103,16 +118,38 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
         dependencyEntry.setOrganization(organization);
         dependencyEntry.setOrganizationUrl(organizationUrl);
         dependencyEntry.setHomePage(homePage);
-        dependencyEntry.addLicense(licenseName, licenseUrl);
+        if (licenseName != null) {
+          dependencyEntry.addLicense(licenseName, licenseUrl);
+        }
+
         store.put(dependencyEntry);
+        if (log.isPresent()) {
+          String info = String.format("Analyse %s:%s:%s[%s]",
+              dependencyEntry.getGroupId(),
+              dependencyEntry.getArtifactId(),
+              dependencyEntry.getVersion(),
+              dependencyEntry.getLicense().keySet().stream().collect(Collectors.joining(",")));
+          log.get().info(info);
+        }
       } catch (Exception ex) {
-        ex.printStackTrace();
+        if (log.isPresent()) {
+          log.get().error(ex.getMessage(), ex);
+        }
       }
 
       try {
         TimeUnit.MILLISECONDS.sleep(random.nextInt(500));
       } catch (InterruptedException e) {
         e.printStackTrace();
+      }
+    } else {
+      if (log.isPresent()) {
+        String info = String.format("Cache Hint %s:%s:%s[%s]",
+            cacheDependencyEntry.getGroupId(),
+            cacheDependencyEntry.getArtifactId(),
+            cacheDependencyEntry.getVersion(),
+            cacheDependencyEntry.getLicense().keySet().stream().collect(Collectors.joining(",")));
+        log.get().info(info);
       }
     }
     return store;

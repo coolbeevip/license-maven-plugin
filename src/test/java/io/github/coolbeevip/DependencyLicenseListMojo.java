@@ -47,9 +47,16 @@ public class DependencyLicenseListMojo {
       "mysql:mysql-connector-java:8.0.15[The GNU General Public License, v2 with FOSS exception]");
   }
 
+  @Test
+  public void license2Test() throws JsonProcessingException {
+    parse.parseLicense( "org.springframework.boot", "spring-boot-starter", "2.3.1.RELEASE");
+    DependencyEntry entry = store.get("org.springframework.boot", "spring-boot-starter", "2.3.1.RELEASE");
+    assertEquals(entry.toString(), "org.springframework.boot:spring-boot-starter:2.3.1.RELEASE[Apache License, Version 2.0]");
+  }
+
   @BeforeClass
   public static void beforeClass() {
-    parse.open("mvnrepository.test.mapdb");
+    parse.open(null);
   }
 
   @AfterClass

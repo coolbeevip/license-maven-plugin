@@ -17,8 +17,6 @@
 package io.github.coolbeevip;
 
 import io.github.coolbeevip.storage.MavenRepositoryStorage;
-import java.util.Optional;
-import org.apache.maven.plugin.logging.Log;
 
 public interface DependencyParse {
 
@@ -27,6 +25,6 @@ public interface DependencyParse {
   void close();
 
   MavenRepositoryStorage parseLicense(String groupId, String artifactId,
-    String version);
+      String version);
 
 }
