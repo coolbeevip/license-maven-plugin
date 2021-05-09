@@ -18,8 +18,9 @@ package io.github.coolbeevip;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.coolbeevip.exports.ExportDependencyToCsv;
-import io.github.coolbeevip.exports.ExportDependencyToNotice;
+import io.github.coolbeevip.exports.ExportDependencyToTxt;
 import io.github.coolbeevip.parse.ParseMavenCentralRepositorySearch;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -52,47 +53,44 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
   @Parameter(property = "reactorProjects", readonly = true, required = true)
   private List<MavenProject> reactorProjects;
 
-  @Parameter(property = "dbfile")
-  String dbfile;
-
   @Parameter(property = "format", defaultValue = "csv")
   String format;
 
+  @Parameter(property = "license", defaultValue = "false")
+  String license;
+
   private List<String> ignoreGroupIds = new ArrayList<>();
 
-  DependencyParse parse = new ParseMavenCentralRepositorySearch();
+  DependencyParse parse;
 
   DependencyExport export;
 
   @Override
   public void execute() {
-    if (dbfile == null) {
-      dbfile = "mvnrepository.mapdb";
-    }
-    getLog().info("export cache db file: " + dbfile);
-
     if (format.equals("csv")) {
+      getLog().info("Export Format CSV");
       export = new ExportDependencyToCsv();
-    } else if (format.equals("notice")) {
-      export = new ExportDependencyToNotice();
+    } else if (format.equals("txt")) {
+      getLog().info("Export Format TXT");
+      export = new ExportDependencyToTxt();
     }
-
-    getLog().info("export format: " + format);
-
-    parse.open(dbfile);
+    String cache = System.getProperty("user.home") + File.separator + ".m2" + File.separator
+        + "mvnrepository.mapdb";
+    parse = new ParseMavenCentralRepositorySearch(Optional.of(getLog()), Boolean.valueOf(license));
+    parse.open(cache);
     try {
       List<String> notices = new ArrayList<>();
       Path path = Paths.get(projectBuildDirectory + "/distribute");
       reactorProjects.stream().forEach(project -> {
         List<Dependency> dependencies = project.getDependencies();
         dependencies.stream()
-          .filter(d -> !project.getGroupId().equals(d.getGroupId()))
-          .filter(d -> scope == null || scope.isEmpty() || scope.equals(d.getScope()))
-          .forEach(dependency -> {
-            parse.parseLicense(Optional.of(getLog()), dependency.getGroupId(),
-              dependency.getArtifactId(),
-              dependency.getVersion());
-          });
+            .filter(d -> !project.getGroupId().equals(d.getGroupId()))
+            .filter(d -> scope == null || scope.isEmpty() || scope.equals(d.getScope()))
+            .forEach(dependency -> {
+              parse.parseLicense(dependency.getGroupId(),
+                  dependency.getArtifactId(),
+                  dependency.getVersion());
+            });
       });
 
       export.export(getLog(), notices, path);

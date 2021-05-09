@@ -16,9 +16,9 @@
 
 package io.github.coolbeevip.parse;
 
-import io.github.coolbeevip.storage.MavenRepositoryStorage;
 import io.github.coolbeevip.DependencyParse;
 import io.github.coolbeevip.pojo.DependencyEntry;
+import io.github.coolbeevip.storage.MavenRepositoryStorage;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
@@ -35,26 +35,41 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  */
 public class ParseMavenCentralRepositorySearch implements DependencyParse {
 
-  final MavenRepositoryStorage store = MavenRepositoryStorage.getInstance();
-  final WebDriver driver = new ChromeDriver(DesiredCapabilities.chrome());
+  final MavenRepositoryStorage store;
+  final WebDriver driver;
   final SecureRandom random = new SecureRandom();
-
+  final Optional<Log> log;
   final String baseUrl = "https://search.maven.org/artifact/";
+  final Boolean licenseEnabled;
 
-  public ParseMavenCentralRepositorySearch() {
-    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-    final SecureRandom random = new SecureRandom();
+  public ParseMavenCentralRepositorySearch(Optional<Log> log, Boolean license) {
+    this.log = log;
+    this.store = MavenRepositoryStorage.getInstance(log);
+    this.licenseEnabled = license;
+    log.ifPresent(l -> {
+      if (this.licenseEnabled) {
+        l.info("License Analyse Enabled");
+      } else {
+        l.info("License Analyse Disabled");
+      }
+    });
+    if (this.licenseEnabled) {
+      this.driver = new ChromeDriver(DesiredCapabilities.chrome());
+      this.driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    } else {
+      this.driver = null;
+    }
   }
 
   @Override
-  public MavenRepositoryStorage parseLicense(Optional<Log> log, String groupId, String artifactId,
-    String version) {
+  public MavenRepositoryStorage parseLicense(String groupId, String artifactId,
+      String version) {
 
-    if(!store.exits(groupId,artifactId,version)){
-      DependencyEntry licenseEntry = new DependencyEntry();
-      licenseEntry.setGroupId(groupId);
-      licenseEntry.setArtifactId(artifactId);
-      licenseEntry.setVersion(version);
+    if (!store.exits(groupId, artifactId, version)) {
+      DependencyEntry dependencyEntry = new DependencyEntry();
+      dependencyEntry.setGroupId(groupId);
+      dependencyEntry.setArtifactId(artifactId);
+      dependencyEntry.setVersion(version);
 
       String url = baseUrl + groupId + "/" + artifactId + "/" + version + "/jar";
       String organization = "";
@@ -62,33 +77,35 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
       String homePage = "";
       String licenseName = "";
       String licenseUrl = "";
-      try{
-        driver.get(url);
-        WebElement webElement = driver.findElement(By.tagName("app-artifact-description"));
-        if(webElement.isDisplayed()){
-          List<WebElement> trList = webElement.findElements(By.tagName("tr"));
-          for (WebElement tr : trList) {
-            WebElement th = tr.findElement(By.tagName("th"));
-            WebElement td = tr.findElement(By.tagName("td"));
-            if (th.getText().startsWith("Organization")) {
-              organization = td.getText();
-            } else if (th.getText().startsWith("Home page")) {
-              homePage = td.getText();
-            } else if (th.getText().startsWith("Source code")) {
-              organizationUrl = td.getText();
-              licenseUrl = td.getText();
-            } else if (th.getText().startsWith("Licenses")) {
-              licenseName = td.getText();
+
+      try {
+        if (licenseEnabled) {
+          driver.get(url);
+          WebElement webElement = driver.findElement(By.tagName("app-artifact-description"));
+          if (webElement.isDisplayed()) {
+            List<WebElement> trList = webElement.findElements(By.tagName("tr"));
+            for (WebElement tr : trList) {
+              WebElement th = tr.findElement(By.tagName("th"));
+              WebElement td = tr.findElement(By.tagName("td"));
+              if (th.getText().startsWith("Organization")) {
+                organization = td.getText();
+              } else if (th.getText().startsWith("Home page")) {
+                homePage = td.getText();
+              } else if (th.getText().startsWith("Source code")) {
+                organizationUrl = td.getText();
+                licenseUrl = td.getText();
+              } else if (th.getText().startsWith("Licenses")) {
+                licenseName = td.getText();
+              }
             }
           }
         }
-
-        licenseEntry.setOrganization(organization);
-        licenseEntry.setOrganizationUrl(organizationUrl);
-        licenseEntry.setHomePage(homePage);
-        licenseEntry.addLicense(licenseName, licenseUrl);
-        store.put(licenseEntry);
-      }catch (Exception ex){
+        dependencyEntry.setOrganization(organization);
+        dependencyEntry.setOrganizationUrl(organizationUrl);
+        dependencyEntry.setHomePage(homePage);
+        dependencyEntry.addLicense(licenseName, licenseUrl);
+        store.put(dependencyEntry);
+      } catch (Exception ex) {
         ex.printStackTrace();
       }
 
@@ -97,7 +114,6 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-
     }
     return store;
   }
@@ -108,8 +124,10 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
   }
 
   @Override
-  public void close(){
-    driver.close();
+  public void close() {
+    if (driver != null) {
+      driver.close();
+    }
     store.close();
   }
 }

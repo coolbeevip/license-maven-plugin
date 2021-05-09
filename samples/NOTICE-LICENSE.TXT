@@ -1,0 +1,236 @@
+NOTICE
+===========================================================================
+Includes content from com.chinamobile.cmos
+
+* sms-core, Version 2.1.12.1 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from org.apache.commons
+
+* commons-lang3, Version 3.10 (<<empty>>) under  ()
+* commons-text, Version 1.9 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from org.assertj
+
+* assertj-core, Version 3.16.1 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from com.squareup.okhttp3
+
+* mockwebserver, Version 3.14.9 (<<empty>>) under  ()
+* okhttp, Version 3.14.9 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from org.projectlombok
+
+* lombok, Version 1.18.12 (https://projectlombok.org) under The MIT License (http://github.com/rzwitserloot/lombok)
+
+===========================================================================
+Includes content from org.slf4j
+
+* jcl-over-slf4j, Version 1.7.30 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from com.google.protobuf
+
+* protobuf-java, Version 3.11.0 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from ch.qos.logback
+
+* logback-classic, Version 1.2.3 (<<empty>>) under  ()
+* logback-core, Version 1.2.3 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from org.springframework.shell
+
+* spring-shell-starter, Version 2.0.1.RELEASE (<<empty>>) under  ()
+
+===========================================================================
+Includes content from com.fasterxml.jackson.core
+
+* jackson-databind, Version 2.11.0 (http://github.com/FasterXML/jackson) under The Apache Software License, Version 2.0 (http://github.com/FasterXML/jackson-databind)
+
+===========================================================================
+Includes content from org.postgresql
+PostgreSQL Global Development Group
+* postgresql, Version 42.2.9 (https://github.com/pgjdbc/pgjdbc) under BSD-2-Clause ()
+
+===========================================================================
+Includes content from com.alibaba.cloud
+
+* spring-cloud-starter-alibaba-nacos-discovery, Version 2.2.1.RELEASE (<<empty>>) under  ()
+
+===========================================================================
+Includes content from wsdl4j
+
+* wsdl4j, Version 1.6.3 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from com.hazelcast
+
+* hazelcast, Version 4.2 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from commons-discovery
+
+* commons-discovery, Version 0.5 (http://commons.apache.org/discovery/) under  (http://svn.apache.org/viewvc/commons/proper/discovery/tags/DISCOVERY_0_5_RC2)
+
+===========================================================================
+Includes content from org.hibernate.validator
+
+* hibernate-validator, Version 6.1.5.Final (<<empty>>) under  ()
+
+===========================================================================
+Includes content from commons-codec
+
+* commons-codec, Version 1.14 (https://commons.apache.org/proper/commons-codec/) under  (https://github.com/apache/commons-codec)
+
+===========================================================================
+Includes content from org.apache.axis
+
+* axis, Version 1.4 (<<empty>>) under  ()
+* axis-jaxrpc, Version 1.4 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from com.oracle.database.jdbc
+
+* ojdbc8, Version 19.8.0.0 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from junit
+JUnit
+* junit, Version 4.13 (http://junit.org) under Eclipse Public License 1.0 (http://github.com/junit-team/junit4/tree/master)
+
+===========================================================================
+Includes content from net.freeutils
+
+* jcharset, Version 2.1 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from org.mockito
+
+* mockito-core, Version 2.16.0 (https://github.com/mockito/mockito) under The MIT License (https://github.com/mockito/mockito.git)
+
+===========================================================================
+Includes content from org.jsmpp
+
+* jsmpp, Version 2.3.10 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from commons-httpclient
+
+* commons-httpclient, Version 3.0 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from joda-time
+Joda.org
+* joda-time, Version 2.10.6 (https://www.joda.org/joda-time/) under Apache License, Version 2.0 (https://github.com/JodaOrg/joda-time)
+
+===========================================================================
+Includes content from org.dom4j
+
+* dom4j, Version 2.1.3 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from com.oracle.database.nls
+
+* orai18n, Version 19.8.0.0 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from io.rest-assured
+
+* rest-assured, Version 3.3.0 (http://code.google.com/p/rest-assured) under  ()
+
+===========================================================================
+Includes content from io.micrometer
+
+* micrometer-registry-prometheus, Version 1.5.1 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from org.glassfish
+
+* javax.el, Version 3.0.0 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from com.alibaba
+
+* fastjson, Version 1.2.69 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from org.junit.jupiter
+
+* junit-jupiter, Version 5.6.2 (https://junit.org/junit5/) under Eclipse Public License v2.0 (https://github.com/junit-team/junit5)
+
+===========================================================================
+Includes content from org.springframework.boot
+
+* spring-boot-starter, Version 2.3.1.RELEASE (<<empty>>) under  ()
+* spring-boot-starter-test, Version 2.3.1.RELEASE (<<empty>>) under  ()
+* spring-boot-starter-web, Version 2.3.1.RELEASE (<<empty>>) under  ()
+
+===========================================================================
+Includes content from com.zaxxer
+Zaxxer.com
+* HikariCP, Version 3.4.5 (https://github.com/brettwooldridge/HikariCP) under The Apache Software License, Version 2.0 (git@github.com:brettwooldridge/HikariCP.git)
+
+===========================================================================
+Includes content from io.netty
+
+* netty-buffer, Version 4.1.50.Final (<<empty>>) under  ()
+* netty-common, Version 4.1.50.Final (<<empty>>) under  ()
+* netty-handler, Version 4.1.50.Final (<<empty>>) under  ()
+* netty-transport, Version 4.1.50.Final (<<empty>>) under  ()
+* netty-transport-native-epoll, Version 4.1.50.Final (<<empty>>) under  ()
+* netty-transport-native-kqueue, Version 4.1.50.Final (<<empty>>) under  ()
+
+===========================================================================
+Includes content from io.grpc
+
+* grpc-netty, Version 1.29.0 (<<empty>>) under  ()
+* grpc-protobuf, Version 1.29.0 (https://github.com/grpc/grpc-java) under Apache 2.0 (https://github.com/grpc/grpc-java)
+* grpc-stub, Version 1.29.0 (https://github.com/grpc/grpc-java) under Apache 2.0 (https://github.com/grpc/grpc-java)
+* grpc-testing, Version 1.29.0 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from org.mybatis
+
+* mybatis, Version 3.5.4 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from com.aliyun
+
+* aliyun-java-sdk-core, Version 4.5.3 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from org.awaitility
+
+* awaitility, Version 3.0.0 (http://awaitility.org) under  ()
+
+===========================================================================
+Includes content from org.freemarker
+
+* freemarker, Version 2.3.30 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from org.simplejavamail
+
+* batch-module, Version 6.4.3 (<<empty>>) under  ()
+* simple-java-mail, Version 6.4.3 (<<empty>>) under  ()
+
+===========================================================================
+Includes content from cn.hutool
+
+* hutool-all, Version 5.3.7 (https://github.com/looly/hutool) under  ()
+
+===========================================================================
+Includes content from soap
+null
+* soap, Version 2.3.1 (null) under 
+
+===========================================================================
+Includes content from com.h2database
+
+* h2, Version 1.4.200 (<<empty>>) under  ()
+

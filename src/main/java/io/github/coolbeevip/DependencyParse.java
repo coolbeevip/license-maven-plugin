@@ -26,7 +26,7 @@ public interface DependencyParse {
 
   void close();
 
-  MavenRepositoryStorage parseLicense(Optional<Log> log, String groupId, String artifactId,
+  MavenRepositoryStorage parseLicense(String groupId, String artifactId,
     String version);
 
 }

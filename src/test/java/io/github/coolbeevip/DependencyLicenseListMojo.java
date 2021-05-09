@@ -29,19 +29,19 @@ import org.junit.Test;
 
 public class DependencyLicenseListMojo {
 
-  final static DependencyParse parse = new ParseMavenCentralRepositorySearch();
-  final static MavenRepositoryStorage store = MavenRepositoryStorage.getInstance();
+  final static DependencyParse parse = new ParseMavenCentralRepositorySearch(Optional.empty(),true);
+  final static MavenRepositoryStorage store = MavenRepositoryStorage.getInstance(Optional.empty());
 
   @Test
   public void licenseTest() throws JsonProcessingException {
-    parse.parseLicense(Optional.empty(), "org.mockito", "mockito-core", "2.23.4");
+    parse.parseLicense( "org.mockito", "mockito-core", "2.23.4");
     DependencyEntry entry = store.get("org.mockito", "mockito-core", "2.23.4");
     assertEquals(entry.toString(), "org.mockito:mockito-core:2.23.4[The MIT License]");
   }
 
   @Test
   public void duplicateLicenseTest() throws JsonProcessingException {
-    parse.parseLicense(Optional.empty(), "mysql", "mysql-connector-java", "8.0.15");
+    parse.parseLicense("mysql", "mysql-connector-java", "8.0.15");
     DependencyEntry entry = store.get("mysql", "mysql-connector-java", "8.0.15");
     assertEquals(entry.toString(),
       "mysql:mysql-connector-java:8.0.15[The GNU General Public License, v2 with FOSS exception]");
