@@ -18,6 +18,7 @@ package io.github.coolbeevip;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.coolbeevip.exports.ExportDependencyToCsv;
+import io.github.coolbeevip.exports.ExportDependencyToPom;
 import io.github.coolbeevip.exports.ExportDependencyToTxt;
 import io.github.coolbeevip.parse.ParseMavenCentralRepositorySearch;
 import java.io.File;
@@ -78,10 +79,13 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
   public void execute() {
     if (format.equals("csv")) {
       getLog().info("Export Format CSV");
-      export = new ExportDependencyToCsv();
+      export = new ExportDependencyToCsv(project);
     } else if (format.equals("txt")) {
       getLog().info("Export Format TXT");
-      export = new ExportDependencyToTxt();
+      export = new ExportDependencyToTxt(project);
+    } else if (format.equals("pom")) {
+      getLog().info("Export Format POM");
+      export = new ExportDependencyToPom(project);
     }
 
     getLog().info("Analyse License timeout " + timeout + " sec.");

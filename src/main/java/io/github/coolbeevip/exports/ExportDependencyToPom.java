@@ -25,20 +25,26 @@ import java.util.stream.Collectors;
 import org.apache.maven.project.MavenProject;
 
 /**
+ * <dependency>
+ *  <groupId></groupId>
+ *  <artifactId></artifactId>
+ *  <version></version>
+ * </dependency>
+ *
  * @author zhanglei
  */
-public class ExportDependencyToTxt extends AbstractExportDependency {
+public class ExportDependencyToPom extends AbstractExportDependency {
 
   final MavenProject project;
   Map<String, List<DependencyEntry>> groupDependencies = new HashMap<>();
 
-  public ExportDependencyToTxt(MavenProject project) {
+  public ExportDependencyToPom(MavenProject project) {
     this.project = project;
   }
 
   @Override
   void exportBefore(List<String> notices) {
-    notices.add("NOTICE");
+
   }
 
   @Override
@@ -56,22 +62,21 @@ public class ExportDependencyToTxt extends AbstractExportDependency {
   void exportContentAfter(List<String> notices) {
     groupDependencies.entrySet().stream().forEach(entry -> {
       String groupId = entry.getKey();
-      notices.add("===========================================================================");
-      notices.add("Includes content from " + groupId);
-      notices.add(entry.getValue().stream().findAny().get().getOrganization());
       entry.getValue().stream().forEach(e -> {
         String lic = e.getLicense().entrySet().stream()
             .map(entry1 -> entry1.getKey() + " (" + entry1.getValue() + ")")
             .collect(Collectors.joining(","));
-        notices.add("* " + e.getArtifactId() + ", Version " + e.getVersion() + " (" + e
-            .getHomePage() + ") under " + lic);
+        notices.add("<dependency>");
+        notices.add("  <groupId>"+groupId+"</groupId>");
+        notices.add("  <artifactId>"+e.getArtifactId()+"</artifactId>");
+        notices.add("  <version>"+e.getVersion()+"</version>");
+        notices.add("</dependency>");
       });
-      notices.add("");
     });
   }
 
   @Override
   String getExportFileName() {
-    return "NOTICE.TXT";
+    return String.format("%s-%s-flatten-pom.xml",project.getGroupId().replace(".","_"),project.getArtifactId());
   }
 }

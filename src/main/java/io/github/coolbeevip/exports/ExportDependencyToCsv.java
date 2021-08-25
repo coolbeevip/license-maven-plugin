@@ -19,11 +19,18 @@ package io.github.coolbeevip.exports;
 import io.github.coolbeevip.pojo.DependencyEntry;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.maven.project.MavenProject;
 
 /**
  * @author zhanglei
  */
 public class ExportDependencyToCsv extends AbstractExportDependency {
+
+  final MavenProject project;
+
+  public ExportDependencyToCsv(MavenProject project) {
+    this.project = project;
+  }
 
   @Override
   void exportBefore(List<String> notices) {
