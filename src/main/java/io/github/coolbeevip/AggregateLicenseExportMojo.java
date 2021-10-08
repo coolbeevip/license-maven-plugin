@@ -30,12 +30,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 
 @Mojo(name = "dependency-license-export", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true, aggregator = true)
 public class AggregateLicenseExportMojo extends AbstractMojo {
@@ -71,9 +78,16 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
   @Parameter(property = "timeout", defaultValue = "5")
   int timeout;
 
+  @Parameter(property = "deep", defaultValue = "3")
+  int deep;
+
   DependencyParse parse;
 
   DependencyExport export;
+
+  @Component
+  private DependencyGraphBuilder dependencyGraphBuilder;
+  ArtifactFilter scopeArtifactFilter = new ScopeArtifactFilter(Artifact.SCOPE_COMPILE);
 
   @Override
   public void execute() {
@@ -109,7 +123,9 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
 
       Map<String, Dependency> exportDependencies = new HashMap<>();
       List<String> finalIgnoreGroupIdList = ignoreGroupIdList;
+
       reactorProjects.stream().forEach(project -> {
+        // 本项目依赖
         List<Dependency> dependencies = project.getDependencies();
         dependencies.stream()
             .filter(d -> !finalIgnoreGroupIdList.stream()
@@ -126,10 +142,38 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
               if (!exportDependencies.containsKey(key)) {
                 exportDependencies.put(key, dependency);
               }
-
             });
-      });
 
+        // 本项目依赖的下级依赖
+        try {
+          dependencyGraphBuilder.buildDependencyGraph(project, scopeArtifactFilter)
+              .getChildren().stream().forEach(dependencyNode -> {
+
+            //  深度递归分析依赖
+            List<DependencyNode> deepDependencyNodes = new ArrayList<>();
+            recursionDependency(deep, dependencyNode.getChildren(), deepDependencyNodes);
+
+            deepDependencyNodes.forEach(node -> {
+              Dependency dependency = new Dependency();
+              dependency.setGroupId(node.getArtifact().getGroupId());
+              dependency.setArtifactId(node.getArtifact().getArtifactId());
+              dependency.setVersion(node.getArtifact().getVersion());
+              parse.parseLicense(dependency.getGroupId(),
+                  dependency.getArtifactId(),
+                  dependency.getVersion());
+              String key = getKey(dependency.getGroupId(), dependency.getArtifactId(),
+                  dependency.getVersion());
+              if (!exportDependencies.containsKey(key)) {
+                getLog().info(">>> " + key);
+                exportDependencies.put(key, dependency);
+              }
+            });
+          });
+        } catch (DependencyGraphBuilderException e) {
+          e.printStackTrace();
+        }
+      });
+      getLog().info(">>> Size " + exportDependencies.size());
       export.export(exportDependencies, getLog(), notices, path);
     } finally {
       parse.close();
@@ -138,5 +182,16 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
 
   private String getKey(String groupId, String artifactId, String version) {
     return groupId + ":" + artifactId + ":" + version;
+  }
+
+  private void recursionDependency(int deep, List<DependencyNode> dependencyNodes,
+      List<DependencyNode> deepDependencyNodes) {
+    if (deep > 0) {
+      int finalDeep = deep - 1;
+      dependencyNodes.forEach(dependencyNode -> {
+        deepDependencyNodes.addAll(dependencyNode.getChildren());
+        recursionDependency(finalDeep, dependencyNode.getChildren(), deepDependencyNodes);
+      });
+    }
   }
 }

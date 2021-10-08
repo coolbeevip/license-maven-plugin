@@ -12,7 +12,9 @@
     limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -24,7 +26,9 @@
   <groupId>io.github.coolbeevip</groupId>
   <artifactId>license-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <description>Contains a Maven 2 plugin to export license info in source files and its optional dependencies</description>
+  <description>Contains a Maven 2 plugin to export license info in source files and its optional
+    dependencies
+  </description>
   <version>1.11.0-SNAPSHOT</version>
 
   <licenses>
@@ -73,6 +77,8 @@
     <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
     <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
     <maven-project.version>2.2.1</maven-project.version>
+    <maven-dependency-tree.version>2.2</maven-dependency-tree.version>
+    <maven-core.version>3.6.2</maven-core.version>
     <selenium-java.version>3.4.0</selenium-java.version>
     <mapdb.version>3.0.8</mapdb.version>
     <junit.version>4.13.1</junit.version>
@@ -117,6 +123,16 @@
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-dependency-tree</artifactId>
+      <version>${maven-dependency-tree.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${maven-core.version}</version>
     </dependency>
   </dependencies>
 
