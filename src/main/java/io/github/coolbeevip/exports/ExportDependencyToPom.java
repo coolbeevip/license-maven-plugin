@@ -25,12 +25,6 @@ import java.util.stream.Collectors;
 import org.apache.maven.project.MavenProject;
 
 /**
- * <dependency>
- *  <groupId></groupId>
- *  <artifactId></artifactId>
- *  <version></version>
- * </dependency>
- *
  * @author zhanglei
  */
 public class ExportDependencyToPom extends AbstractExportDependency {
