@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
@@ -125,17 +127,49 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
       List<String> finalIgnoreGroupIdList = ignoreGroupIdList;
 
       reactorProjects.stream().forEach(project -> {
+//        Map<String, Dependency> managementDependencies = new HashMap<>();
+//        if (project.getDependencyManagement() != null) {
+//          // 本项目管理依赖
+//          managementDependencies = project.getDependencyManagement()
+//              .getDependencies().stream()
+//              .collect(Collectors.toMap(Dependency::getManagementKey, Function.identity()));
+//        }
+
         // 本项目依赖
         List<Dependency> dependencies = project.getDependencies();
+
+//        // 使用项目管理依赖替代本项目依赖
+//        List<Dependency> dependencies = new ArrayList<>();
+//        Map<String, Dependency> finalManagementDependencies = managementDependencies;
+//        projectDependencies.forEach(dependency -> {
+//          if (finalManagementDependencies.containsKey(dependency.getManagementKey())) {
+//            Dependency mgrDependency = finalManagementDependencies
+//                .get(dependency.getManagementKey());
+//            if(!mgrDependency.getVersion().equals(dependency.getVersion())){
+//              dependencies.add(mgrDependency);
+//              getLog().info("Management Dependencies " +
+//                  dependency.getManagementKey() + " " + mgrDependency.getVersion() + " replace "
+//                  + dependency
+//                  .getVersion());
+//            }else{
+//              dependencies.add(dependency);
+//            }
+//          } else {
+//            dependencies.add(dependency);
+//          }
+//        });
+
         dependencies.stream()
             .filter(d -> !finalIgnoreGroupIdList.stream()
                 .filter(groupId -> d.getGroupId().startsWith(groupId)).findAny().isPresent())
             .filter(d -> !project.getGroupId().equals(d.getGroupId()))
             .filter(d -> scope == null || scope.isEmpty() || scope.equals(d.getScope()))
+            .filter(d -> d.getScope()!=null && !d.getScope().equals("test") && !d.getScope().equals("provided"))
             .forEach(dependency -> {
               parse.parseLicense(dependency.getGroupId(),
                   dependency.getArtifactId(),
-                  dependency.getVersion());
+                  dependency.getVersion(),
+                  dependency.getScope());
 
               String key = getKey(dependency.getGroupId(), dependency.getArtifactId(),
                   dependency.getVersion());
@@ -160,7 +194,8 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
               dependency.setVersion(node.getArtifact().getVersion());
               parse.parseLicense(dependency.getGroupId(),
                   dependency.getArtifactId(),
-                  dependency.getVersion());
+                  dependency.getVersion(),
+                  dependency.getScope());
               String key = getKey(dependency.getGroupId(), dependency.getArtifactId(),
                   dependency.getVersion());
               if (!exportDependencies.containsKey(key)) {
