@@ -70,7 +70,7 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
 
   @Override
   public MavenRepositoryStorage parseLicense(String groupId, String artifactId,
-      String version) {
+      String version, String scope) {
 
     DependencyEntry cacheDependencyEntry = null;
     if (store.exits(groupId, artifactId, version)) {

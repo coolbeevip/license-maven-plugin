@@ -34,14 +34,14 @@ public class DependencyLicenseListMojo {
 
   @Test
   public void licenseTest() throws JsonProcessingException {
-    parse.parseLicense( "org.mockito", "mockito-core", "2.23.4");
+    parse.parseLicense( "org.mockito", "mockito-core", "2.23.4","");
     DependencyEntry entry = store.get("org.mockito", "mockito-core", "2.23.4");
     assertEquals(entry.toString(), "org.mockito:mockito-core:2.23.4[The MIT License]");
   }
 
   @Test
   public void duplicateLicenseTest() throws JsonProcessingException {
-    parse.parseLicense("mysql", "mysql-connector-java", "8.0.15");
+    parse.parseLicense("mysql", "mysql-connector-java", "8.0.15","");
     DependencyEntry entry = store.get("mysql", "mysql-connector-java", "8.0.15");
     assertEquals(entry.toString(),
       "mysql:mysql-connector-java:8.0.15[The GNU General Public License, v2 with FOSS exception]");
@@ -49,7 +49,7 @@ public class DependencyLicenseListMojo {
 
   @Test
   public void license2Test() throws JsonProcessingException {
-    parse.parseLicense( "org.springframework.boot", "spring-boot-starter", "2.3.1.RELEASE");
+    parse.parseLicense( "org.springframework.boot", "spring-boot-starter", "2.3.1.RELEASE","");
     DependencyEntry entry = store.get("org.springframework.boot", "spring-boot-starter", "2.3.1.RELEASE");
     assertEquals(entry.toString(), "org.springframework.boot:spring-boot-starter:2.3.1.RELEASE[Apache License, Version 2.0]");
   }

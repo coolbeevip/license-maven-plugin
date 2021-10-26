@@ -24,6 +24,7 @@ public class DependencyEntry {
   private String groupId;
   private String artifactId;
   private String version;
+  private String scope;
   private String organization;
   private String organizationUrl;
   private String homePage;
@@ -51,6 +52,14 @@ public class DependencyEntry {
 
   public void setVersion(String version) {
     this.version = version;
+  }
+
+  public String getScope() {
+    return scope;
+  }
+
+  public void setScope(String scope) {
+    this.scope = scope;
   }
 
   public String getOrganizationUrl() {

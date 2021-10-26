@@ -61,9 +61,12 @@ public class ExportDependencyToPom extends AbstractExportDependency {
             .map(entry1 -> entry1.getKey() + " (" + entry1.getValue() + ")")
             .collect(Collectors.joining(","));
         notices.add("<dependency>");
-        notices.add("  <groupId>"+groupId+"</groupId>");
-        notices.add("  <artifactId>"+e.getArtifactId()+"</artifactId>");
-        notices.add("  <version>"+e.getVersion()+"</version>");
+        notices.add("  <groupId>" + groupId + "</groupId>");
+        notices.add("  <artifactId>" + e.getArtifactId() + "</artifactId>");
+        notices.add("  <version>" + e.getVersion() + "</version>");
+        if (e.getScope() != null) {
+          notices.add("  <scope>" + e.getScope() + "</scope>");
+        }
         notices.add("</dependency>");
       });
     });
@@ -71,6 +74,7 @@ public class ExportDependencyToPom extends AbstractExportDependency {
 
   @Override
   String getExportFileName() {
-    return String.format("%s-%s-flatten-pom.xml",project.getGroupId().replace(".","_"),project.getArtifactId());
+    return String.format("%s-%s-flatten-pom.xml", project.getGroupId().replace(".", "_"),
+        project.getArtifactId());
   }
 }
