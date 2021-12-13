@@ -7,31 +7,31 @@
 导出 CSV 格式
 
 ```shell
-mvn io.github.coolbeevip:license-maven-plugin:1.11.0:dependency-license-export -Dformat=csv
+mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=csv
 ```
 
 导出 TXT 格式
 
 ```shell
-mvn io.github.coolbeevip:license-maven-plugin:1.11.0:dependency-license-export -Dformat=txt
+mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=txt
 ```
 
 导出 POM 格式
 
 ```shell
-mvn io.github.coolbeevip:license-maven-plugin:1.11.0:dependency-license-export -Dformat=pom
+mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=pom
 ```
 
 导出时忽略本部分依赖
 
 ```shell
-mvn io.github.coolbeevip:license-maven-plugin:1.11.0:dependency-license-export -Dformat=csv -DignoreGroupIds=org.my
+mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=csv -DignoreGroupIds=org.my
 ```
 
 导出时尝试分析依赖 License
 
 ```shell script
-mvn io.github.coolbeevip:license-maven-plugin:1.11.0:dependency-license-export -Dformat=csv -Dlicense=true
+mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=csv -Dlicense=true
 ```
 
 [more](https://coolbeevip.github.io/posts/maven/maven-export-dependencies-analyse-license/)
