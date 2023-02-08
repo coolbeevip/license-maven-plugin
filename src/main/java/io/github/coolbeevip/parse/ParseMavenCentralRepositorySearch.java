@@ -90,14 +90,16 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
       dependencyEntry.setGroupId(groupId);
       dependencyEntry.setArtifactId(artifactId);
       dependencyEntry.setVersion(version);
+      dependencyEntry.setScope(scope);
 
       String skipKey = dependencyEntry.getGroupId()+":"+dependencyEntry.getArtifactId()+":"+dependencyEntry.getVersion();
       if(!skips.contains(skipKey)){
         if (log.isPresent()) {
-          String info = String.format("Analyse %s:%s:%s",
+          String info = String.format("Analyse %s:%s:%s:%s",
               dependencyEntry.getGroupId(),
               dependencyEntry.getArtifactId(),
-              dependencyEntry.getVersion());
+              dependencyEntry.getVersion(),
+              dependencyEntry.getScope());
           log.get().info(info);
         }
 

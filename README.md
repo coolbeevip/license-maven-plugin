@@ -1,37 +1,36 @@
-# 生成 Maven 项目依赖报告
+# Generate Maven project dependency report
 [![Apache License 2](https://img.shields.io/badge/license-ASF2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.coolbeevip/license-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.coolbeevip/license-maven-plugin/)
 
-支持生成 CSV, NOTICE, POM 格式的依赖报告，并尝试分析依赖的 LICENSE 信息
+## Goals Overview
 
-导出 CSV 格式
+Generate dependency reports in CSV, NOTICE, POM format, and try to analyze dependent LICENSE information
 
-```shell
-mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=csv
-```
+## Usage
 
-导出 TXT 格式
+You generate dependency reports in the project directory. like this:
 
 ```shell
-mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=txt
+mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export
 ```
 
-导出 POM 格式
+**Note:** By default, NOTICE.CSV report is generated under the target/distribute
 
-```shell
-mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=pom
-```
+## Optional Parameters
 
-导出时忽略本部分依赖
+| Name           | Type    | Since | Description                                                                                                  |
+|----------------|---------|-------|--------------------------------------------------------------------------------------------------------------|
+| format         | String  | 1.3.0 | Report format: csv txt pom, **Default value is: csv**                                                        |
+| ignoreGroupIds | String  | 1.3.0 | Ignore artifact groupId, multiple commas separated, for example: org.my.project,org.your.project             |
+| timeout        | Integer | 1.3.0 | Analysis timeout, **Default value is: 60**                                                                   |
+| license        | Boolean | 1.3.0 | Try to crawl https://search.maven.org/artifact/ data to get License information, **Default value is: false** |
 
-```shell
-mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=csv -DignoreGroupIds=org.my
-```
 
-导出时尝试分析依赖 License
+## Examples
 
-```shell script
-mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=csv -Dlicense=true
-```
+* Generate a dependency report in TXT format `mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=txt`
+* Ignore artifacts for groupId org.my `mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export -DignoreGroupIds=org.my`
+* Only analyze 10 layers of deep dependencies `mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export -Ddeep=10`
+* Generate a report to try to get License information `mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export -Dlicense=true`
+* Set analysis timeout 120 sec `mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export -Dtimeout=120`
 
-[more](https://coolbeevip.github.io/posts/maven/maven-export-dependencies-analyse-license/)
