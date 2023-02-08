@@ -7,6 +7,14 @@
 
 Generate dependency reports in CSV, NOTICE, POM format, and try to analyze dependent LICENSE information
 
+* CSV Report
+
+![](images/img-csv.png)
+
+* TXT Report
+
+![](images/img-txt.png)
+
 ## Usage
 
 You generate dependency reports in the project directory. like this:
@@ -26,7 +34,6 @@ mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license
 | timeout        | Integer | 1.3.0 | Analysis timeout, **Default value is: 60**                                                                   |
 | deep           | Integer | 1.4.0 | Indirect Dependency Analysis Depth, **Default value is: 100**                                                |
 | license        | Boolean | 1.3.0 | Try to crawl https://search.maven.org/artifact/ data to get License information, **Default value is: false** |
-
 
 ## Examples
 
