@@ -1,12 +1,12 @@
 /**
  * Copyright © 2020 Lei Zhang (zhanglei@apache.org)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,12 +17,13 @@
 package io.github.coolbeevip.exports;
 
 import io.github.coolbeevip.pojo.DependencyEntry;
+import org.apache.maven.project.MavenProject;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import org.apache.maven.project.MavenProject;
 
 /**
  * @author zhanglei
@@ -38,6 +39,19 @@ public class ExportDependencyToPom extends AbstractExportDependency {
 
   @Override
   void exportBefore(List<String> notices) {
+    notices.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    notices.add("");
+    notices.add("<!-- license-maven-plugin automatically created by " + new Date() + "-->");
+    notices.add("");
+    notices.add("<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">");
+    notices.add("");
+    notices.add("  <modelVersion>4.0.0</modelVersion>");
+    notices.add("  <groupId>" + project.getGroupId() + "</groupId>");
+    notices.add("  <artifactId>" + project.getArtifactId() + "</artifactId>");
+    notices.add("  <version>" + project.getVersion() + "</version>");
+    notices.add("  <packaging>pom</packaging>");
+    notices.add("");
+    notices.add("  <dependencies>");
 
   }
 
@@ -57,19 +71,18 @@ public class ExportDependencyToPom extends AbstractExportDependency {
     groupDependencies.entrySet().stream().forEach(entry -> {
       String groupId = entry.getKey();
       entry.getValue().stream().forEach(e -> {
-        String lic = e.getLicense().entrySet().stream()
-            .map(entry1 -> entry1.getKey() + " (" + entry1.getValue() + ")")
-            .collect(Collectors.joining(","));
-        notices.add("<dependency>");
-        notices.add("  <groupId>" + groupId + "</groupId>");
-        notices.add("  <artifactId>" + e.getArtifactId() + "</artifactId>");
-        notices.add("  <version>" + e.getVersion() + "</version>");
+        notices.add("    <dependency>");
+        notices.add("      <groupId>" + groupId + "</groupId>");
+        notices.add("      <artifactId>" + e.getArtifactId() + "</artifactId>");
+        notices.add("      <version>" + e.getVersion() + "</version>");
         if (e.getScope() != null) {
-          notices.add("  <scope>" + e.getScope() + "</scope>");
+          notices.add("    <scope>" + e.getScope() + "</scope>");
         }
-        notices.add("</dependency>");
+        notices.add("    </dependency>");
       });
     });
+    notices.add("  </dependencies>");
+    notices.add("</project>");
   }
 
   @Override

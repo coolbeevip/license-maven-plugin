@@ -5,7 +5,7 @@
 
 ## Goals Overview
 
-Generate dependency reports in CSV, NOTICE, POM format, and try to analyze dependent LICENSE information
+Generate dependency reports in CSV, NOTICE, POM format, and try to analyze dependent LICENSE information.
 
 * CSV Report
 
@@ -18,6 +18,8 @@ Generate dependency reports in CSV, NOTICE, POM format, and try to analyze depen
 ## Usage
 
 You generate dependency reports in the project directory. like this:
+
+**Note:** If your project is a multi-module maven project, please use the `mvn install` command to install the artifacts to the local repos.
 
 ```shell
 mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export
