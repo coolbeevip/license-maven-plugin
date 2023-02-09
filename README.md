@@ -22,7 +22,7 @@ You generate dependency reports in the project directory. like this:
 **Note:** If your project is a multi-module maven project, please use the `mvn install` command to install the artifacts to the local repos.
 
 ```shell
-mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export
+mvn io.github.coolbeevip:license-maven-plugin:1.14.0:dependency-license-export
 ```
 
 **Note:** By default, NOTICE.CSV report is generated under the target/distribute
@@ -40,8 +40,8 @@ mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license
 ## Examples
 
 * Generate a dependency report in TXT format `mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=txt`
-* Ignore artifacts for groupId org.my `mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export -DignoreGroupIds=org.my`
-* Only analyze 10 layers of deep dependencies `mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export -Ddeep=10`
-* Generate a report to try to get License information `mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export -Dlicense=true`
-* Set analysis timeout 120 sec `mvn io.github.coolbeevip:license-maven-plugin:1.14.0-SNAPSHOT:dependency-license-export -Dtimeout=120`
+* Ignore artifacts for groupId org.my `mvn io.github.coolbeevip:license-maven-plugin:1.14.0:dependency-license-export -DignoreGroupIds=org.my`
+* Only analyze 10 layers of deep dependencies `mvn io.github.coolbeevip:license-maven-plugin:1.14.0:dependency-license-export -Ddeep=10`
+* Generate a report to try to get License information `mvn io.github.coolbeevip:license-maven-plugin:1.14.0:dependency-license-export -Dlicense=true`
+* Set analysis timeout 120 sec `mvn io.github.coolbeevip:license-maven-plugin:1.14.0:dependency-license-export -Dtimeout=120`
 
