@@ -124,8 +124,7 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
       reactorProjects.stream().forEach(project -> {
         List<Dependency> dependencies = project.getDependencies();
         dependencies.stream()
-            .filter(d -> !finalIgnoreGroupIdList.stream()
-                .filter(groupId -> d.getGroupId().startsWith(groupId)).findAny().isPresent())
+            .filter(d -> !finalIgnoreGroupIdList.stream().filter(groupId -> d.getGroupId().startsWith(groupId)).findAny().isPresent())
             .filter(d -> !project.getGroupId().equals(d.getGroupId()))
             .filter(d -> scope == null || scope.isEmpty() || scope.equals(d.getScope()))
             .filter(d -> !d.getScope().equals("provided"))
@@ -153,6 +152,7 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
                 recursionDependency(deep, dependencyNode.getChildren(), deepDependencyNodes);
 
                 deepDependencyNodes.stream()
+                    .filter(d -> !finalIgnoreGroupIdList.stream().filter(groupId -> d.getArtifact().getGroupId().startsWith(groupId)).findAny().isPresent())
                     .filter(n -> !n.getArtifact().getScope().equals("provided"))
                     .forEach(node -> {
                   Dependency dependency = new Dependency();
