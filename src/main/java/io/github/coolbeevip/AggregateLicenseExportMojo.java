@@ -16,7 +16,6 @@
 
 package io.github.coolbeevip;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.coolbeevip.exports.ExportDependencyToCsv;
 import io.github.coolbeevip.exports.ExportDependencyToPom;
 import io.github.coolbeevip.exports.ExportDependencyToTxt;
@@ -38,42 +37,67 @@ import org.apache.maven.shared.dependency.graph.DependencyNode;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Mojo(name = "dependency-license-export", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true, aggregator = true)
 public class AggregateLicenseExportMojo extends AbstractMojo {
 
   final static String CACHE_FILE_NAME = "mvnrepository.mapdb";
 
-  final ObjectMapper jsonMapper = new ObjectMapper();
-
   @Parameter(defaultValue = "${project}", required = true, readonly = true)
   MavenProject project;
 
-  @Parameter(property = "project.build.directory")
+  @Parameter(property = "project.build.directory", readonly = true)
   String projectBuildDirectory;
 
-  @Parameter(property = "user.dir")
-  String userDirectory;
-
-  @Parameter(property = "scope")
+  @Parameter(property = "scope", readonly = true)
   String scope;
 
   @Parameter(property = "reactorProjects", readonly = true, required = true)
   private List<MavenProject> reactorProjects;
 
+  /**
+   * Report format: csv txt pom
+   *
+   * @since 1.3.0
+   */
   @Parameter(property = "format", defaultValue = "csv")
   String format;
 
+  /**
+   * Try to crawl https://search.maven.org/artifact/ data to get License information
+   *
+   * @since 1.3.0
+   */
   @Parameter(property = "license", defaultValue = "false")
   String license;
 
+  /**
+   * Ignore artifact groupId, multiple commas separated, for example: org.my.project,org.your.project
+   *
+   * @since 1.3.0
+   */
   @Parameter(property = "ignoreGroupIds")
   String ignoreGroupIds;
 
+  /**
+   * Analysis timeout sec
+   *
+   * @since 1.3.0
+   */
   @Parameter(property = "timeout", defaultValue = "60")
   int timeout;
 
+  /**
+   * Indirect Dependency Analysis Depth
+   *
+   * @since 1.4.0
+   */
   @Parameter(property = "deep", defaultValue = "100")
   int deep;
 
@@ -155,22 +179,22 @@ public class AggregateLicenseExportMojo extends AbstractMojo {
                     .filter(d -> !finalIgnoreGroupIdList.stream().filter(groupId -> d.getArtifact().getGroupId().startsWith(groupId)).findAny().isPresent())
                     .filter(n -> !n.getArtifact().getScope().equals("provided"))
                     .forEach(node -> {
-                  Dependency dependency = new Dependency();
-                  dependency.setGroupId(node.getArtifact().getGroupId());
-                  dependency.setArtifactId(node.getArtifact().getArtifactId());
-                  dependency.setVersion(node.getArtifact().getVersion());
-                  dependency.setScope(node.getArtifact().getScope());
-                  parse.parseLicense(dependency.getGroupId(),
-                      dependency.getArtifactId(),
-                      dependency.getVersion(),
-                      dependency.getScope());
-                  String key = getKey(dependency.getGroupId(), dependency.getArtifactId(),
-                      dependency.getVersion());
-                  if (!exportDependencies.containsKey(key)) {
-                    getLog().info(">>> " + key);
-                    exportDependencies.put(key, dependency);
-                  }
-                });
+                      Dependency dependency = new Dependency();
+                      dependency.setGroupId(node.getArtifact().getGroupId());
+                      dependency.setArtifactId(node.getArtifact().getArtifactId());
+                      dependency.setVersion(node.getArtifact().getVersion());
+                      dependency.setScope(node.getArtifact().getScope());
+                      parse.parseLicense(dependency.getGroupId(),
+                          dependency.getArtifactId(),
+                          dependency.getVersion(),
+                          dependency.getScope());
+                      String key = getKey(dependency.getGroupId(), dependency.getArtifactId(),
+                          dependency.getVersion());
+                      if (!exportDependencies.containsKey(key)) {
+                        getLog().info(">>> " + key);
+                        exportDependencies.put(key, dependency);
+                      }
+                    });
               });
         } catch (DependencyGraphBuilderException e) {
           e.printStackTrace();
