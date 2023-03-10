@@ -39,9 +39,9 @@ mvn io.github.coolbeevip:license-maven-plugin:1.15.0:dependency-license-export
 
 ## Examples
 
-* Generate a dependency report in TXT format `mvn io.github.coolbeevip:license-maven-plugin:1.13.0:dependency-license-export -Dformat=txt`
-* Ignore artifacts for groupId org.my `mvn io.github.coolbeevip:license-maven-plugin:1.14.0:dependency-license-export -DignoreGroupIds=org.my`
-* Only analyze 10 layers of deep dependencies `mvn io.github.coolbeevip:license-maven-plugin:1.14.0:dependency-license-export -Ddeep=10`
-* Generate a report to try to get License information `mvn io.github.coolbeevip:license-maven-plugin:1.14.0:dependency-license-export -Dlicense=true`
-* Set analysis timeout 120 sec `mvn io.github.coolbeevip:license-maven-plugin:1.14.0:dependency-license-export -Dtimeout=120`
+* Generate a dependency report in TXT format `mvn io.github.coolbeevip:license-maven-plugin:1.15.0:dependency-license-export -Dformat=txt`
+* Ignore artifacts for groupId org.my `mvn io.github.coolbeevip:license-maven-plugin:1.15.0:dependency-license-export -DignoreGroupIds=org.my`
+* Only analyze 10 layers of deep dependencies `mvn io.github.coolbeevip:license-maven-plugin:1.15.0:dependency-license-export -Ddeep=10`
+* Generate a report to try to get License information `mvn io.github.coolbeevip:license-maven-plugin:1.15.0:dependency-license-export -Dlicense=true`
+* Set analysis timeout 120 sec `mvn io.github.coolbeevip:license-maven-plugin:1.15.0:dependency-license-export -Dtimeout=120`
 
