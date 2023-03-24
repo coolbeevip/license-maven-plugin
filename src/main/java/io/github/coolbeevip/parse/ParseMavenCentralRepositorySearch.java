@@ -1,12 +1,12 @@
 /**
  * Copyright © 2020 Lei Zhang (zhanglei@apache.org)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,19 +20,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.coolbeevip.DependencyParse;
 import io.github.coolbeevip.pojo.DependencyEntry;
 import io.github.coolbeevip.storage.MavenRepositoryStorage;
-import java.security.SecureRandom;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.apache.maven.plugin.logging.Log;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.security.SecureRandom;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author zhanglei
@@ -43,7 +43,7 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
   final WebDriver driver;
   final SecureRandom random = new SecureRandom();
   final Optional<Log> log;
-  final String baseUrl = "https://search.maven.org/artifact/";
+  public static final String baseUrl = "https://central.sonatype.com/artifact/";
   final Boolean licenseEnabled;
   final Set<String> skips = new HashSet<>();
   final int timeout;
@@ -70,8 +70,7 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
 
   @Override
   public MavenRepositoryStorage parseLicense(String groupId, String artifactId,
-      String version, String scope) {
-
+                                             String version, String scope) {
     DependencyEntry cacheDependencyEntry = null;
     if (store.exits(groupId, artifactId, version)) {
       try {
@@ -92,8 +91,8 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
       dependencyEntry.setVersion(version);
       dependencyEntry.setScope(scope);
 
-      String skipKey = dependencyEntry.getGroupId()+":"+dependencyEntry.getArtifactId()+":"+dependencyEntry.getVersion();
-      if(!skips.contains(skipKey)){
+      String skipKey = dependencyEntry.getGroupId() + ":" + dependencyEntry.getArtifactId() + ":" + dependencyEntry.getVersion();
+      if (!skips.contains(skipKey)) {
         if (log.isPresent()) {
           String info = String.format("Analyse %s:%s:%s:%s",
               dependencyEntry.getGroupId(),
@@ -113,6 +112,20 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
         try {
           if (licenseEnabled) {
             driver.get(url);
+            WebElement licenseElement = driver.findElement(By.xpath("//li[@data-test=\"license\"]"));
+            if (licenseElement != null) {
+              licenseName = licenseElement.getText();
+            }
+            WebElement projectElement = driver.findElement(By.xpath("//a[@data-test=\"project-url\"]"));
+            if (projectElement != null) {
+              homePage = projectElement.getAttribute("href");
+            }
+            WebElement organizationElement = driver.findElement(By.xpath("//label[@data-test=\"component-namespace\"]/span"));
+            if (organizationElement != null) {
+              organization = organizationElement.getText();
+            }
+
+            /*
             WebElement webElement = driver.findElement(By.tagName("app-artifact-description"));
             if (webElement.isDisplayed()) {
               List<WebElement> trList = webElement.findElements(By.tagName("tr"));
@@ -130,6 +143,11 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
                   licenseName = td.getText();
                 }
               }
+            }*/
+            try {
+              TimeUnit.MILLISECONDS.sleep(random.nextInt(500));
+            } catch (InterruptedException e) {
+              e.printStackTrace();
             }
           }
           dependencyEntry.setOrganization(organization);
@@ -155,16 +173,10 @@ public class ParseMavenCentralRepositorySearch implements DependencyParse {
                 dependencyEntry.getArtifactId(),
                 dependencyEntry.getVersion());
             log.get().info(info);
-            skipKey = dependencyEntry.getGroupId()+":"+dependencyEntry.getArtifactId()+":"+dependencyEntry.getVersion();
+            skipKey = dependencyEntry.getGroupId() + ":" + dependencyEntry.getArtifactId() + ":" + dependencyEntry.getVersion();
             skips.add(skipKey);
           }
         }
-      }
-
-      try {
-        TimeUnit.MILLISECONDS.sleep(random.nextInt(500));
-      } catch (InterruptedException e) {
-        e.printStackTrace();
       }
     } else {
       if (log.isPresent()) {
