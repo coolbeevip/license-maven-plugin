@@ -29,13 +29,14 @@ mvn io.github.coolbeevip:license-maven-plugin:1.16.0:dependency-license-export
 
 ## Optional Parameters
 
-| Name           | Type    | Since | Description                                                                                                  |
-|----------------|---------|-------|--------------------------------------------------------------------------------------------------------------|
-| format         | String  | 1.3.0 | Report format: csv txt pom, **Default value is: csv**                                                        |
-| ignoreGroupIds | String  | 1.3.0 | Ignore artifact groupId, multiple commas separated, for example: org.my.project,org.your.project             |
-| timeout        | Integer | 1.3.0 | Analysis timeout, **Default value is: 60**                                                                   |
-| deep           | Integer | 1.4.0 | Indirect Dependency Analysis Depth, **Default value is: 100**                                                |
-| license        | Boolean | 1.3.0 | Try to crawl https://search.maven.org/artifact/ data to get License information, **Default value is: false** |
+| Name           | Type    | Since | Description                                                                                                                                                                                                                                                                                                                                                                                                       |
+|----------------|---------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| format         | String  | 1.3.0 | Report format: csv txt pom, **Default value is: csv**                                                                                                                                                                                                                                                                                                                                                             |
+| ignoreGroupIds | String  | 1.3.0 | Ignore artifact groupId, multiple commas separated, for example: org.my.project,org.your.project                                                                                                                                                                                                                                                                                                                  |
+| timeout        | Integer | 1.3.0 | Analysis timeout, **Default value is: 60**                                                                                                                                                                                                                                                                                                                                                                        |
+| deep           | Integer | 1.4.0 | Indirect Dependency Analysis Depth, **Default value is: 100**                                                                                                                                                                                                                                                                                                                                                     |
+| license        | Boolean | 1.3.0 | Try to crawl https://search.maven.org/artifact/ data to get License information, **Default value is: false**. You should download and install [ChromeDriver](https://chromedriver.chromium.org/downloads) manually to ensure it matches your local Chrome browser version. **It will try to crawl https://search.maven.org/artifact/ data to obtain License information. Please be sure to use it with caution.** |
+|
 
 ## Examples
 
