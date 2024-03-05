@@ -79,7 +79,7 @@
     <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
     <maven-project.version>2.2.1</maven-project.version>
     <maven-dependency-tree.version>2.2</maven-dependency-tree.version>
-    <maven-core.version>3.6.2</maven-core.version>
+    <maven-core.version>3.8.1</maven-core.version>
     <selenium-java.version>3.4.0</selenium-java.version>
     <mapdb.version>3.0.8</mapdb.version>
     <jackson.version>2.12.7.1</jackson.version>
